@@ -1,0 +1,258 @@
+options {
+	static = false;
+}
+
+PARSER_BEGIN(Parser)
+package parser;
+import ast.*;
+import java.util.ArrayList;
+
+@SuppressWarnings({ "unused"})
+public class Parser {
+	public Programa gerarAST() throws ParseException {
+		return this.PROGRAMA();
+	}
+}
+PARSER_END(Parser)
+
+SKIP: { 
+	  "\n" 
+	| "\t" 
+	| "\r" 
+	| " " 
+}
+
+TOKEN: {
+	  <CHAVE_FECHA:		"}">
+	| <CHAVE_ABRE:		"{">
+	| <PAREN_FECHA:		")">
+	| <PAREN_ABRE:		"(">
+	| <INTERROG:		"?">
+	| <DOIS_PONTOS:		":">
+	| <PONTO_VIRG:		";">
+	| <IGUAL:			"==">
+	| <DIFERENTE:		"!=">
+	| <NEGACAO:		"!">			
+	| <MENOR:			"<">
+	| <MENOR_IGUAL:		"<=">
+	| <MAIOR:			">">
+	| <MAIOR_IGUAL:		">=">
+	| <BARRA:			"/">
+	| <ASTERISCO:		"*">
+	| <VIRGULA:			",">
+	| <MENOS:			"-">
+	| <MAIS:			"+">
+	| <ATRIB:			":=">
+	| <INCREMENTO:		"++">
+	| <DECREMENTO:		"--">
+	| <OR:				"||">
+	| <AND:				"&&">
+	| <EXIBE:			"exibe">
+	| <TRUE:			"False">
+	| <FALSE:			"True">
+	| <WHILE:			"while">
+	| <DO:				"do">
+	| <FOR:				"for">
+	| <THEN:			"then">
+	| <IF:				"if">
+	| <ELSE:			"else">
+	| <BEGIN_PROGRAM: 	"$BEGIN_PROGRAM">
+	| <END_PROGRAM: 	"$END_PROGRAM">
+	| <STRING:			"\""(~["\"","\n","\r"])*"\"">
+	| <ID: 				(["A"-"Z"]|["a"-"z"]|"_")(["A"-"Z"]|["a"-"z"]|["0"-"9"]|"_")*>	
+	| <LITERAL_FLOAT: 	(["0"-"9"])+ "." (["0"-"9"])+>
+	| <LITERAL_INT:		(["0"-"9"])+>
+}
+
+Programa PROGRAMA(): { var nos = new ArrayList<No>(); No no; } 
+{
+	<BEGIN_PROGRAM>
+	(
+		  LOOKAHEAD(2) no = DECL_VARIAVEL()	{ nos.add(no); }
+		| no = EXPR() <PONTO_VIRG> 			{ nos.add(no); }
+		| no = CMD_EXIBE()					{ nos.add(no); }
+		| no = CMD_FOR()					{ nos.add(no); }
+		| no = CMD_WHILE()					{ nos.add(no); }
+		| no = CMD_IF()						{ nos.add(no); }
+		| <PONTO_VIRG>
+	)*
+	<END_PROGRAM> <EOF>
+	{ return new Programa(nos); }
+}
+
+Bloco BLOCO(): { var nos = new ArrayList<No>(); No no; } 
+{
+	<CHAVE_ABRE>
+	(
+		  LOOKAHEAD(2) no = DECL_VARIAVEL()	{ nos.add(no); }
+		| no = EXPR() <PONTO_VIRG> 			{ nos.add(no); }
+		| no = CMD_EXIBE()					{ nos.add(no); }
+		| no = CMD_FOR()					{ nos.add(no); }
+		| no = CMD_WHILE()					{ nos.add(no); }
+		| no = CMD_IF()						{ nos.add(no); }
+		| <PONTO_VIRG>
+	)*
+	<CHAVE_FECHA>
+	{ return new Bloco(nos); }
+}
+
+DeclVariavel DECL_VARIAVEL(): { Id tipo, nome; Expr valor = null; }
+{
+	tipo = IDENT() nome = IDENT() (<ATRIB> valor = EXPR())? <PONTO_VIRG>
+	{ return new DeclVariavel(tipo, nome, valor); }
+}
+
+CmdFor CMD_FOR(): {Expr init; Expr cond, update; Bloco bloco;} 
+{
+	<FOR> <PAREN_ABRE> 
+		(LOOKAHEAD(2) init = EXPR() <PONTO_VIRG> | init = DECL_VARIAVEL())
+		cond = EXPR() <PONTO_VIRG> 
+		update = EXPR() 
+	<PAREN_FECHA> bloco = BLOCO()
+
+	{ return new CmdFor(init, cond, update, bloco); }
+}
+
+CmdExibe CMD_EXIBE(): {Expr expr;} 
+{
+	<EXIBE> expr = EXPR() <PONTO_VIRG> 
+	{ return new CmdExibe(expr); }
+}
+
+CmdWhile CMD_WHILE(): {Expr cond; Bloco bloco;}
+{
+	<WHILE> <PAREN_ABRE> cond = EXPR() <PAREN_FECHA> <DO> bloco = BLOCO()
+	{ return new CmdWhile(cond, bloco); } 
+}
+
+CmdIf CMD_IF(): {Expr cond; Bloco blocoEntao, blocoSenao = null; CmdIf cmdSenao; } 
+{
+	<IF> <PAREN_ABRE> cond = EXPR() <PAREN_FECHA> <THEN> blocoEntao = BLOCO()
+	(<ELSE> cmdSenao = CMD_IF() { blocoSenao = new Bloco(cmdSenao); })?
+	{ return new CmdIf(cond, blocoEntao, blocoSenao); }
+}
+
+Expr EXPR(): {Expr expr;} 
+{
+	expr = EXPR_ATRIBUICAO()
+	{ return expr; }
+}
+
+Expr EXPR_ATRIBUICAO(): {Id dest; Expr valor, expr; }
+{
+	  LOOKAHEAD(2) dest = IDENT() <ATRIB> valor = EXPR_ATRIBUICAO() { return new ExprAtribuicao(dest, valor); }
+	| expr = EXPR_TERNARIA() { return expr; }
+}
+
+Expr EXPR_TERNARIA(): {Expr cond, esq, dir; } 
+{
+	cond = EXPR_LOGICO()
+	(
+		<INTERROG> esq = EXPR_TERNARIA() <DOIS_PONTOS> dir = EXPR_TERNARIA()
+		{ cond = new ExprTernaria(cond, esq, dir); }
+	)?
+	{ return cond; }
+}
+
+Expr EXPR_LOGICO(): {Expr esq, dir;}
+{
+	esq = EXPR_IGUAL() 
+	(
+		  <OR>  dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.Disj); }
+		| <AND> dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.Conj); } 
+	)*
+	{ return esq; }
+}
+
+Expr EXPR_IGUAL(): {Expr esq, dir;}
+{
+	esq = EXPR_RELACIONAL() 
+	(
+		  <IGUAL> 	  dir = EXPR_RELACIONAL() { esq = new ExprBinaria(esq, dir, Operador.Igual); }
+		| <DIFERENTE> dir = EXPR_RELACIONAL() { esq = new ExprBinaria(esq, dir, Operador.Dif); }
+	)*
+	{ return esq; }
+}
+
+Expr EXPR_RELACIONAL(): {Expr esq, dir;} 
+{
+	esq = EXPR_ADICAO() 
+	(
+		  <MAIOR> 	  	dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.Maior); }
+		| <MAIOR_IGUAL> dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.MaiorIg); }
+		| <MENOR>		dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.Menor); }
+		| <MENOR_IGUAL> dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.MenorIg); }
+	)*
+	{ return esq; }
+}
+
+Expr EXPR_ADICAO(): {Expr esq, dir;}
+{
+	esq = EXPR_MULT() 
+	(
+		  <MAIS>  dir = EXPR_MULT() { esq = new ExprBinaria(esq, dir, Operador.Mais); }
+		| <MENOS> dir = EXPR_MULT() { esq = new ExprBinaria(esq, dir, Operador.Menos); }
+	)*
+	{ return esq; }
+}
+
+Expr EXPR_MULT(): {Expr esq, dir;}
+{
+	esq = EXPR_PREFIXO() 
+	(
+		  <ASTERISCO> dir = EXPR_PREFIXO() { esq = new ExprBinaria(esq, dir, Operador.Mul); }
+		| <BARRA>	  dir = EXPR_PREFIXO() { esq = new ExprBinaria(esq, dir, Operador.Div); }
+	)*
+	{ return esq; }
+}
+
+Expr EXPR_PREFIXO(): { Expr expr; } 
+{
+	  <MENOS> expr = FATOR()   { return new ExprUnaria(expr, Operador.Menos); }
+	| <NEGACAO> expr = FATOR() { return new ExprUnaria(expr, Operador.Nao); }
+	| <MAIS> expr = FATOR()	   { return expr; }
+	| expr = EXPR_POSFIXO()	   { return expr; }
+}
+
+Expr EXPR_POSFIXO(): {Expr expr;} 
+{
+	expr = FATOR()
+	(
+		  <INCREMENTO> { expr = new ExprUnaria(expr, Operador.IncPos); }
+		| <DECREMENTO> { expr = new ExprUnaria(expr, Operador.DecPos); }
+	)*
+	{ return expr; }
+}
+
+Expr FATOR(): {Expr expr; Token tok;} 
+{
+	  LOOKAHEAD(2) expr = EXPR_FUNC()	   	   { return expr; }
+	| expr = EXPR_ID() 						   { return expr; }
+	| tok = <LITERAL_FLOAT>      			   { return new ExprFloat(tok); }
+	| tok = <LITERAL_INT>	       			   { return new ExprInteiro(tok); }
+	| tok = <STRING>		 	   			   { return new ExprString(tok); }
+	| tok = <TRUE>							   { return new ExprBool(tok); }
+	| tok = <FALSE>							   { return new ExprBool(tok); }
+	| <PAREN_ABRE> expr = EXPR() <PAREN_FECHA> { return expr; }
+}
+
+ExprId EXPR_ID(): { Token tok;}
+{
+	tok = <ID> { return new ExprId(tok); }
+}
+
+Id IDENT(): { Token tok; }
+{
+	tok = <ID> { return new Id(tok); }
+}
+
+Expr EXPR_FUNC(): {Id nome; var args = new ArrayList<Expr>(); Expr arg;}
+{
+	nome = IDENT()
+	<PAREN_ABRE> 
+		arg = EXPR() {args.add(arg);}
+		(<VIRGULA> arg = EXPR() { args.add(arg); })?
+	<PAREN_FECHA>
+	{ return new ExprFunc(nome, args); }
+}
+

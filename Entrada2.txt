@@ -1,0 +1,9 @@
+$BEGIN_PROGRAM
+
+x := 5;
+
+x := "eu";
+
+tam(x);
+
+$END_PROGRAM

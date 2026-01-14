@@ -1,0 +1,87 @@
+$BEGIN_PROGRAM
+FLOAT n;
+STRING s;
+FLOAT a;
+FLOAT k;
+INT j;
+FLOAT mult;
+
+n := 2.0;
+s := "Ola";
+a := 6.0;
+k := 1.0;
+j := 10;
+mult := 0.0;
+
+for(i := 4.0; i > n; i++){
+    while(n != a) do {
+        exibe s;
+        n := n+1.0;
+    };
+    i := 0.0;
+};
+
+n := 2.0;
+for(i := 4.0; i > 2.0; i--) {
+    exibe i;
+    for(j := 0.0; j < 4.0; j++){
+        exibe j;
+    };
+};
+
+b := a > n ? 0.0 : 1.0;
+exibe b;
+
+h := a && n;
+exibe h;
+
+c := a/n + a;
+exibe c;
+
+d := "Francisco" + "Professor";
+e := " Santos";
+f := d + e;
+exibe f;
+tam(f);
+
+n := 2.0;
+exibe n;
+if(a > n) then {
+    a := 1.0;
+    if(1) then {
+        a := 2.0;
+        if(a == n)then {
+            a := 10.0;
+        };
+    };
+};
+
+x := 3.0 < 2.0 ? True : False;
+exibe x;
+
+y := !h;
+exibe y;
+exibe a;
+
+b := 1.0;
+c := "meio";
+
+for(i := 0.0; i < 5.0; i++){
+    exibe i;
+    for(j := 5.0; j > 0.0; j--){
+        exibe c;
+    };
+};
+
+m := 4.0;
+while(m > 2.0)do {
+    exibe s;
+    m := m - 1.0;
+    mult := mult + k * m/2;
+};
+exibe mult;
+while(!h) do {
+    exibe s;
+    h := False;
+};
+$END_PROGRAM
