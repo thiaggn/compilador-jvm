@@ -1,8 +1,12 @@
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Scanner;
 
 import analisador.AnalisadorSemantico;
 import parser.Parser;
@@ -15,8 +19,10 @@ public class Main
 	{
 		try 
 		{
-			// faz a análise léxica e sintática
-			var parser = new Parser(System.in);
+			File arquivo = new File(args[0]);
+			InputStream stream = new FileInputStream(arquivo);
+
+			var parser = new Parser(stream);
 			var programa = parser.gerarAST();
 			
 			// faz a análise semântica
@@ -27,7 +33,12 @@ public class Main
 				return;
 			}
 
-			programa.print();
+			System.out.println("[ok] passou na análise semântica!");
+
+			if (args.length > 1 && args[1].equals("--arvore"))
+			{
+				programa.print();
+			}
 
 			// gera o código intermediário
 			GeradorIR.gerarIntermediario(programa);

@@ -173,7 +173,6 @@ public class AnalisadorSemantico
 
 	static ast.No analisarAtribuicao(ast.ExprAtribuicao atrib)
 	{
-		System.out.println("entrou aqui");
 		Simbolo simbolo = escopos.resolver(atrib.destino.nome);
 
 		// Caso 1) Se uma atribuição não se refere a nenhuma variável existente em qualquer escopo,
@@ -626,7 +625,7 @@ public class AnalisadorSemantico
 		}
 		escopos.fecharEscopo(); // fim do escopo do bloco
 	}
-	
+
 	static void erro(ast.No no, String msg)
 	{
 		erros.add(new ErroSemantico(no.linha, no.coluna, msg));
