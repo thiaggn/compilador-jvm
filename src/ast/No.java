@@ -2,8 +2,8 @@ package ast;
 
 public abstract class No implements Printavel
 {
-	public int linha;
-	public int coluna;
+	public final int linha;
+	public final int coluna;
 
 	protected No(int linha, int coluna)
 	{

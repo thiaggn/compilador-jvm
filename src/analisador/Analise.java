@@ -8,9 +8,9 @@ public class Analise
 {
 	ArrayList<ErroSemantico> erros;
 
-	public Analise()
+	public Analise(ArrayList<ErroSemantico> erros)
 	{
-		this.erros = new ArrayList<>();
+		this.erros = erros;
 	}
 
 	public void exibirErros()

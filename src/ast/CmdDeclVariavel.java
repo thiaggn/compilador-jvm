@@ -1,14 +1,14 @@
 package ast;
 
 
-import ast.simbolo.SimboloNome;
+import ast.simbolo.Simbolo;
 
 public class CmdDeclVariavel extends Cmd
 {
 	public Id 		   identificador;
 	public Id 		   tipo;
 	public Expr 	   exprInicial;
-	public SimboloNome simbolo;
+	public Simbolo simbolo;
 
 	public CmdDeclVariavel(Id tipo, Id nome, Expr valor)
 	{

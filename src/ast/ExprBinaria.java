@@ -4,16 +4,16 @@ import parser.Token;
 
 public class ExprBinaria extends Expr
 {
-	public Expr 	   esq;
-	public Expr 	   dir;
 	public Operador op;
+	public Expr 	esq;
+	public Expr 	dir;
 
 	public ExprBinaria(Expr esq, Expr dir, Operador op, Token tokOp)
 	{
 		super(tokOp.beginLine, tokOp.beginColumn, Tipo.Indeterminado);
+		this.op  = op;
 		this.esq = esq;
 		this.dir = dir;
-		this.op = op;
 	}
 
 	@Override

@@ -1,26 +1,24 @@
 package ast;
-import ast.simbolo.SimboloNome;
 import parser.Token;
 
 public class ExprId extends Expr
 {
-	public Posicao     posicao;
 	public String 	   nome;
-	public SimboloNome simbolo;
+	public int 		   referencia;
 
 	public ExprId(Token token)
 	{
 		super(token.beginLine, token.beginColumn, Tipo.Indeterminado);
-		this.posicao = new Posicao(token);
 		this.nome 	 = token.image;
-		this.simbolo = null;
+		this.referencia = -1;
 	}
 
 	@Override
 	public void print()
 	{
 		Print.abreObjeto("ExprId");
-		Print.campoComObjeto("simbolo", this.simbolo);
+		Print.campoComValor("nome", this.nome);
+		Print.campoComValor("referencia", String.format("%d", this.referencia));
 		Print.fechaObjeto();
 	}
 }

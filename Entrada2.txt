@@ -1,9 +1,17 @@
 $BEGIN_PROGRAM
+FLOAT k;
+STRING s;
+FLOAT mult;
 
-x := 5;
+k := 1.0;
+s := "Ola";
+a := 6.0;
+n := 2.0;
 
-x := "eu";
+h := 1;
 
-tam(x);
-
+while(!h) do {
+    exibe s;
+    h := False;
+};
 $END_PROGRAM

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bloco extends No {
-	public List<No> nos;
+	public final List<No> nos;
 
 	public Bloco(List<No> nos) {
 		super(0, 0);

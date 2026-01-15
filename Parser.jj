@@ -102,15 +102,15 @@ CmdDeclVariavel CMD_DECL_VARIAVEL(): { Id tipo, nome; Expr valor = null; }
 	{ return new CmdDeclVariavel(tipo, nome, valor); }
 }
 
-CmdFor CMD_FOR(): {No init; Expr cond, update; Bloco bloco; Token tokFor; } 
+CmdFor CMD_FOR(): {Id varInit; Expr exprInit, exprTeste, exprIter; Bloco bloco; Token tokFor; } 
 {
 	tokFor = <FOR> <PAREN_ABRE> 
-		(LOOKAHEAD(2) init = EXPR() <PONTO_VIRG> | init = CMD_DECL_VARIAVEL())
-		cond = EXPR() <PONTO_VIRG> 
-		update = EXPR() 
+		varInit = IDENT() <ATRIB> exprInit = EXPR() <PONTO_VIRG>
+		exprTeste = EXPR() <PONTO_VIRG> 
+		exprIter = EXPR() 
 	<PAREN_FECHA> bloco = BLOCO()
 
-	{ return new CmdFor(init, cond, update, bloco, tokFor); }
+	{ return new CmdFor(varInit, exprInit, exprTeste, exprIter, bloco, tokFor); }
 }
 
 CmdExibe CMD_EXIBE(): {Expr expr; Token tokExibe;} 

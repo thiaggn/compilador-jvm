@@ -10,6 +10,18 @@ public class Id extends Expr {
 		this.nome = tok.image;
 	}
 
+	public Id(String nome, int linha, int coluna)
+	{
+		super(linha, coluna, Tipo.Indeterminado);
+		this.nome = nome;
+	}
+
+	public Id(String nome)
+	{
+		super(0, 0, Tipo.Indeterminado);
+		this.nome = nome;
+	}
+
 	@Override
 	public String toString() {
 		return this.nome;
