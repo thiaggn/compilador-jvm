@@ -86,8 +86,9 @@ exibe i; // 4
 ```go
 i := 5;
 for (i := 0; i < 10; i++) {
-	i++ // incrementa o 'i' no escopo do laço
+	i++; // incrementa o 'i' no escopo do laço
 }
+exibe i; // 5
 ```
 ```go
 for (i := 10; 0; 0) { 
