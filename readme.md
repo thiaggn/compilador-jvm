@@ -9,7 +9,7 @@ float a := 10.0;
 x := "nome";
 
 int tamanho = tam(x);
-exibe x + a; // 14
+exibe x + a; // 14.0
 ```
 
 Variáveis dinâmicas permitem ser redeclaradas com outro tipo desde que estejam no mesmo escopo. Se estiverem em escopos diferentes, ocorre uma declaração local.
