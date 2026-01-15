@@ -75,7 +75,6 @@ k := 5;
 for (i := k; i < 6; i++) {
 	// itera 1 vez
 }
-exibe i; // 5
 ```
 ```go
 i := 4;
