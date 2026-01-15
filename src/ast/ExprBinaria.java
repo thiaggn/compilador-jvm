@@ -1,18 +1,19 @@
 package ast;
 
-public class ExprBinaria implements Expr
+import parser.Token;
+
+public class ExprBinaria extends Expr
 {
 	public Expr 	   esq;
 	public Expr 	   dir;
 	public Operador op;
-	public Posicao 		posicao;
 
-	public ExprBinaria(Expr esq, Expr dir, Operador op)
+	public ExprBinaria(Expr esq, Expr dir, Operador op, Token tokOp)
 	{
+		super(tokOp.beginLine, tokOp.beginColumn, Tipo.Indeterminado);
 		this.esq = esq;
 		this.dir = dir;
 		this.op = op;
-		this.posicao = new Posicao(esq.obterPosicao(), dir.obterPosicao());
 	}
 
 	@Override
@@ -23,11 +24,5 @@ public class ExprBinaria implements Expr
 		Print.campoComObjeto("expr_esq", esq);
 		Print.campoComObjeto("expr_dir", dir);
 		Print.fechaObjeto();
-	}
-
-	@Override
-	public Posicao obterPosicao()
-	{
-		return this.posicao;
 	}
 }

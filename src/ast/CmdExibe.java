@@ -1,11 +1,14 @@
 package ast;
 
-public class CmdExibe implements Cmd
+import parser.Token;
+
+public class CmdExibe extends Cmd
 {
 	public Expr valor;
 
-	public CmdExibe(Expr valor)
+	public CmdExibe(Expr valor, Token tokExibe)
 	{
+		super(tokExibe.beginLine, tokExibe.beginColumn);
 		this.valor = valor;
 	}
 
@@ -15,11 +18,5 @@ public class CmdExibe implements Cmd
 		Print.abreObjeto("CmdExibe");
 		Print.campoComObjeto("expr", this.valor);
 		Print.fechaObjeto();
-	}
-
-	@Override
-	public Posicao obterPosicao()
-	{
-		return null;
 	}
 }

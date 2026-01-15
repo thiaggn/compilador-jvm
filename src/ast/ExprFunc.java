@@ -2,17 +2,16 @@ package ast;
 
 import java.util.ArrayList;
 
-public class ExprFunc implements Expr
+public class ExprFunc extends Expr
 {
-	public Id identificador;
+	public Id 			   identificador;
 	public ArrayList<Expr> argumentos;
-	public Posicao posicao;
 
 	public ExprFunc(Id nome, ArrayList<Expr> args)
 	{
+		super(nome.linha, nome.coluna, Tipo.Indeterminado);
 		this.identificador = nome;
 		this.argumentos = args;
-		this.posicao = nome.obterPosicao();
 	}
 
 	@Override
@@ -26,11 +25,5 @@ public class ExprFunc implements Expr
 		}
 		Print.fechaArray();
 		Print.fechaObjeto();
-	}
-
-	@Override
-	public Posicao obterPosicao()
-	{
-		return this.posicao;
 	}
 }

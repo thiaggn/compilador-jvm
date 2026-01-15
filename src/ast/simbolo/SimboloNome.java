@@ -2,6 +2,7 @@ package ast.simbolo;
 
 import ast.Print;
 import ast.Printavel;
+import ast.Tipo;
 
 public class SimboloNome implements Printavel {
 	public final String nome;

@@ -2,22 +2,17 @@ package ast;
 
 import parser.Token;
 
-public class Id implements No {
+public class Id extends Expr {
 	public String nome;
-	public Posicao posicao;
 
 	public Id(Token tok) {
-		this.posicao = new Posicao(tok);
+		super(tok.beginLine, tok.beginColumn, Tipo.Indeterminado);
 		this.nome = tok.image;
 	}
 
 	@Override
 	public String toString() {
 		return this.nome;
-	}
-
-	public Posicao obterPosicao() {
-		return this.posicao;
 	}
 
 	@Override

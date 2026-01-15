@@ -1,25 +1,18 @@
 package analisador;
 
-import ast.No;
-import ast.Posicao;
 
 public class ErroSemantico
 {
-	public Posicao posicao;
+	public int linha;
+	public int coluna;
 	public String descricao;
 
-	public ErroSemantico(No no, String descricao)
+	public ErroSemantico(int linha, int coluna, String descricao)
 	{
-		this.posicao = no.obterPosicao();
+		this.linha = linha;
+		this.coluna = coluna;
 		this.descricao = descricao;
 	}
-
-	public ErroSemantico(Posicao posicao, String descricao)
-	{
-		this.posicao = posicao;
-		this.descricao = descricao;
-	}
-
 
 	public String toString()
 	{

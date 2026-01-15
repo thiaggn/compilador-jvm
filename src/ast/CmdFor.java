@@ -1,14 +1,17 @@
 package ast;
 
-public class CmdFor implements Cmd
+import parser.Token;
+
+public final class CmdFor extends Cmd
 {
-	public Expr exprInicial;
-	public Expr exprCond;
-	public Expr exprUpdate;
+	public No    exprInicial;
+	public Expr  exprCond;
+	public Expr  exprUpdate;
 	public Bloco bloco;
 
-	public CmdFor (Expr inicio, Expr condicao, Expr atualizacao, Bloco bloco)
+	public CmdFor (No inicio, Expr condicao, Expr atualizacao, Bloco bloco, Token tokFor)
 	{
+		super(tokFor.beginLine, tokFor.beginColumn);
 		this.exprInicial = inicio;
 		this.exprCond = condicao;
 		this.exprUpdate = atualizacao;
@@ -24,10 +27,5 @@ public class CmdFor implements Cmd
 		Print.campoComObjeto("expr_update", this.exprUpdate);
 		Print.campoComObjeto("bloco", this.bloco);
 		Print.fechaObjeto();
-	}
-
-	@Override
-	public Posicao obterPosicao() {
-		return null;
 	}
 }

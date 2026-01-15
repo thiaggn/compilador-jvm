@@ -1,16 +1,18 @@
 package ast;
 
-public class ExprUnaria implements Expr
-{
-	public Expr 	   expr;
-	public Operador op;
-	public Posicao 	   posicao;
+import parser.Token;
 
-	public ExprUnaria(Expr expr, Operador op)
+public class ExprUnaria extends Expr
+{
+	public Expr 	expr;
+	public Operador op;
+	public Posicao 	posicao;
+
+	public ExprUnaria(Expr expr, Operador op, Token tokOp)
 	{
+		super(tokOp.beginLine, tokOp.beginColumn, Tipo.Indeterminado);
 		this.expr    = expr;
 		this.op 	 = op;
-		this.posicao = expr.obterPosicao();
 	}
 
 	@Override
@@ -20,11 +22,5 @@ public class ExprUnaria implements Expr
 		Print.campoComValor("operador", op.name());
 		Print.campoComObjeto("expr", expr);
 		Print.fechaObjeto();
-	}
-
-	@Override
-	public Posicao obterPosicao()
-	{
-		return this.posicao;
 	}
 }

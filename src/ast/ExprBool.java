@@ -2,28 +2,21 @@ package ast;
 
 import parser.Token;
 
-public final class ExprBool implements Expr
+public final class ExprBool extends Expr
 {
 	public boolean valor;
 	public Token token;
-	public Posicao posicao;
 
-	public ExprBool(Token token)
+	public ExprBool(Token token, boolean valor)
 	{
+		super(token.beginLine, token.endColumn, Tipo.Bool);
 		this.token = token;
-		this.valor = Boolean.parseBoolean(token.image);
-		this.posicao = new Posicao(token);
+		this.valor = valor;
 	}
 
 	@Override
 	public void print()
 	{
 		Print.valorDeCampo(this.valor + " (bool)");
-	}
-
-	@Override
-	public Posicao obterPosicao()
-	{
-		return this.posicao;
 	}
 }

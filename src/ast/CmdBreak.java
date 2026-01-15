@@ -1,18 +1,15 @@
 package ast;
 
-public class CmdBreak implements Cmd {
+public final class CmdBreak extends Cmd
+{
+	protected CmdBreak(int linha, int coluna) 
+	{
+		super(linha, coluna);
+	}
 
 	@Override
 	public void print()
 	{
-		Print.abreObjeto("CmdBreak");
 		
-		Print.fechaObjeto();
 	}
-
-	@Override
-	public Posicao obterPosicao() {
-		return null;
-	}
-	
 }

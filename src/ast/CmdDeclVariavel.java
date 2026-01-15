@@ -3,22 +3,24 @@ package ast;
 
 import ast.simbolo.SimboloNome;
 
-public class DeclVariavel implements Expr
+public class CmdDeclVariavel extends Cmd
 {
 	public Id 		   identificador;
 	public Id 		   tipo;
 	public Expr 	   exprInicial;
 	public SimboloNome simbolo;
 
-	public DeclVariavel(Id tipo, Id nome, Expr valor)
+	public CmdDeclVariavel(Id tipo, Id nome, Expr valor)
 	{
+		super(tipo.linha, tipo.coluna);
 		this.tipo = tipo;
 		this.identificador = nome;
 		this.exprInicial = valor;
 	}
 
-	public DeclVariavel(Id tipo, Id nome)
+	public CmdDeclVariavel(Id tipo, Id nome)
 	{
+		super(tipo.linha, tipo.coluna);
 		this.tipo = tipo;
 		this.identificador = nome;
 		this.exprInicial = null;
@@ -35,11 +37,5 @@ public class DeclVariavel implements Expr
 			Print.campoComObjeto("valor", this.exprInicial);
 		}
 		Print.fechaObjeto();
-	}
-
-	@Override
-	public Posicao obterPosicao()
-	{
-		return null;
 	}
 }

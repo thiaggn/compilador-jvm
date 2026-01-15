@@ -38,7 +38,7 @@ public class Parser implements ParserConstants {
         break label_1;
       }
       if (jj_2_1(2)) {
-        no = DECL_VARIAVEL();
+        no = CMD_DECL_VARIAVEL();
 nos.add(no);
       } else {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -122,7 +122,7 @@ nos.add(no);
         break label_2;
       }
       if (jj_2_2(2)) {
-        no = DECL_VARIAVEL();
+        no = CMD_DECL_VARIAVEL();
 nos.add(no);
       } else {
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -177,7 +177,7 @@ nos.add(no);
     throw new Error("Missing return statement in function");
   }
 
-  final public DeclVariavel DECL_VARIAVEL() throws ParseException {Id tipo, nome; Expr valor = null;
+  final public CmdDeclVariavel CMD_DECL_VARIAVEL() throws ParseException {Id tipo, nome; Expr valor = null;
     tipo = IDENT();
     nome = IDENT();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -191,12 +191,12 @@ nos.add(no);
       ;
     }
     jj_consume_token(PONTO_VIRG);
-{if ("" != null) return new DeclVariavel(tipo, nome, valor);}
+{if ("" != null) return new CmdDeclVariavel(tipo, nome, valor);}
     throw new Error("Missing return statement in function");
   }
 
-  final public CmdFor CMD_FOR() throws ParseException {Expr init; Expr cond, update; Bloco bloco;
-    jj_consume_token(FOR);
+  final public CmdFor CMD_FOR() throws ParseException {No init; Expr cond, update; Bloco bloco; Token tokFor;
+    tokFor = jj_consume_token(FOR);
     jj_consume_token(PAREN_ABRE);
     if (jj_2_3(2)) {
       init = EXPR();
@@ -204,7 +204,7 @@ nos.add(no);
     } else {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case ID:{
-        init = DECL_VARIAVEL();
+        init = CMD_DECL_VARIAVEL();
         break;
         }
       default:
@@ -218,31 +218,31 @@ nos.add(no);
     update = EXPR();
     jj_consume_token(PAREN_FECHA);
     bloco = BLOCO();
-{if ("" != null) return new CmdFor(init, cond, update, bloco);}
+{if ("" != null) return new CmdFor(init, cond, update, bloco, tokFor);}
     throw new Error("Missing return statement in function");
   }
 
-  final public CmdExibe CMD_EXIBE() throws ParseException {Expr expr;
-    jj_consume_token(EXIBE);
+  final public CmdExibe CMD_EXIBE() throws ParseException {Expr expr; Token tokExibe;
+    tokExibe = jj_consume_token(EXIBE);
     expr = EXPR();
     jj_consume_token(PONTO_VIRG);
-{if ("" != null) return new CmdExibe(expr);}
+{if ("" != null) return new CmdExibe(expr, tokExibe);}
     throw new Error("Missing return statement in function");
   }
 
-  final public CmdWhile CMD_WHILE() throws ParseException {Expr cond; Bloco bloco;
-    jj_consume_token(WHILE);
+  final public CmdWhile CMD_WHILE() throws ParseException {Expr cond; Bloco bloco; Token tokWhile;
+    tokWhile = jj_consume_token(WHILE);
     jj_consume_token(PAREN_ABRE);
     cond = EXPR();
     jj_consume_token(PAREN_FECHA);
     jj_consume_token(DO);
     bloco = BLOCO();
-{if ("" != null) return new CmdWhile(cond, bloco);}
+{if ("" != null) return new CmdWhile(cond, bloco, tokWhile);}
     throw new Error("Missing return statement in function");
   }
 
-  final public CmdIf CMD_IF() throws ParseException {Expr cond; Bloco blocoEntao, blocoSenao = null; CmdIf cmdSenao;
-    jj_consume_token(IF);
+  final public CmdIf CMD_IF() throws ParseException {Expr cond; Bloco blocoEntao, blocoSenao = null; CmdIf cmdSenao; Token tokIf;
+    tokIf = jj_consume_token(IF);
     jj_consume_token(PAREN_ABRE);
     cond = EXPR();
     jj_consume_token(PAREN_FECHA);
@@ -259,7 +259,7 @@ blocoSenao = new Bloco(cmdSenao);
       jj_la1[6] = jj_gen;
       ;
     }
-{if ("" != null) return new CmdIf(cond, blocoEntao, blocoSenao);}
+{if ("" != null) return new CmdIf(cond, blocoEntao, blocoSenao, tokIf);}
     throw new Error("Missing return statement in function");
   }
 
@@ -319,7 +319,7 @@ cond = new ExprTernaria(cond, esq, dir);
     throw new Error("Missing return statement in function");
   }
 
-  final public Expr EXPR_LOGICO() throws ParseException {Expr esq, dir;
+  final public Expr EXPR_LOGICO() throws ParseException {Expr esq, dir; Token tokOp;
     esq = EXPR_IGUAL();
     label_3:
     while (true) {
@@ -335,15 +335,15 @@ cond = new ExprTernaria(cond, esq, dir);
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case OR:{
-        jj_consume_token(OR);
+        tokOp = jj_consume_token(OR);
         dir = EXPR_IGUAL();
-esq = new ExprBinaria(esq, dir, Operador.Disj);
+esq = new ExprBinaria(esq, dir, Operador.Disj, tokOp);
         break;
         }
       case AND:{
-        jj_consume_token(AND);
+        tokOp = jj_consume_token(AND);
         dir = EXPR_IGUAL();
-esq = new ExprBinaria(esq, dir, Operador.Conj);
+esq = new ExprBinaria(esq, dir, Operador.Conj, tokOp);
         break;
         }
       default:
@@ -356,7 +356,7 @@ esq = new ExprBinaria(esq, dir, Operador.Conj);
     throw new Error("Missing return statement in function");
   }
 
-  final public Expr EXPR_IGUAL() throws ParseException {Expr esq, dir;
+  final public Expr EXPR_IGUAL() throws ParseException {Expr esq, dir; Token tokOp;
     esq = EXPR_RELACIONAL();
     label_4:
     while (true) {
@@ -372,15 +372,15 @@ esq = new ExprBinaria(esq, dir, Operador.Conj);
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case IGUAL:{
-        jj_consume_token(IGUAL);
+        tokOp = jj_consume_token(IGUAL);
         dir = EXPR_RELACIONAL();
-esq = new ExprBinaria(esq, dir, Operador.Igual);
+esq = new ExprBinaria(esq, dir, Operador.Igual, tokOp);
         break;
         }
       case DIFERENTE:{
-        jj_consume_token(DIFERENTE);
+        tokOp = jj_consume_token(DIFERENTE);
         dir = EXPR_RELACIONAL();
-esq = new ExprBinaria(esq, dir, Operador.Dif);
+esq = new ExprBinaria(esq, dir, Operador.Dif, tokOp);
         break;
         }
       default:
@@ -393,7 +393,7 @@ esq = new ExprBinaria(esq, dir, Operador.Dif);
     throw new Error("Missing return statement in function");
   }
 
-  final public Expr EXPR_RELACIONAL() throws ParseException {Expr esq, dir;
+  final public Expr EXPR_RELACIONAL() throws ParseException {Expr esq, dir; Token tokOp;
     esq = EXPR_ADICAO();
     label_5:
     while (true) {
@@ -411,27 +411,27 @@ esq = new ExprBinaria(esq, dir, Operador.Dif);
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case MAIOR:{
-        jj_consume_token(MAIOR);
+        tokOp = jj_consume_token(MAIOR);
         dir = EXPR_ADICAO();
-esq = new ExprBinaria(esq, dir, Operador.Maior);
+esq = new ExprBinaria(esq, dir, Operador.Maior, tokOp);
         break;
         }
       case MAIOR_IGUAL:{
-        jj_consume_token(MAIOR_IGUAL);
+        tokOp = jj_consume_token(MAIOR_IGUAL);
         dir = EXPR_ADICAO();
-esq = new ExprBinaria(esq, dir, Operador.MaiorIg);
+esq = new ExprBinaria(esq, dir, Operador.MaiorIg, tokOp);
         break;
         }
       case MENOR:{
-        jj_consume_token(MENOR);
+        tokOp = jj_consume_token(MENOR);
         dir = EXPR_ADICAO();
-esq = new ExprBinaria(esq, dir, Operador.Menor);
+esq = new ExprBinaria(esq, dir, Operador.Menor, tokOp);
         break;
         }
       case MENOR_IGUAL:{
-        jj_consume_token(MENOR_IGUAL);
+        tokOp = jj_consume_token(MENOR_IGUAL);
         dir = EXPR_ADICAO();
-esq = new ExprBinaria(esq, dir, Operador.MenorIg);
+esq = new ExprBinaria(esq, dir, Operador.MenorIg, tokOp);
         break;
         }
       default:
@@ -444,7 +444,7 @@ esq = new ExprBinaria(esq, dir, Operador.MenorIg);
     throw new Error("Missing return statement in function");
   }
 
-  final public Expr EXPR_ADICAO() throws ParseException {Expr esq, dir;
+  final public Expr EXPR_ADICAO() throws ParseException {Expr esq, dir; Token tokOp;
     esq = EXPR_MULT();
     label_6:
     while (true) {
@@ -460,15 +460,15 @@ esq = new ExprBinaria(esq, dir, Operador.MenorIg);
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case MAIS:{
-        jj_consume_token(MAIS);
+        tokOp = jj_consume_token(MAIS);
         dir = EXPR_MULT();
-esq = new ExprBinaria(esq, dir, Operador.Mais);
+esq = new ExprBinaria(esq, dir, Operador.Mais, tokOp);
         break;
         }
       case MENOS:{
-        jj_consume_token(MENOS);
+        tokOp = jj_consume_token(MENOS);
         dir = EXPR_MULT();
-esq = new ExprBinaria(esq, dir, Operador.Menos);
+esq = new ExprBinaria(esq, dir, Operador.Menos, tokOp);
         break;
         }
       default:
@@ -481,7 +481,7 @@ esq = new ExprBinaria(esq, dir, Operador.Menos);
     throw new Error("Missing return statement in function");
   }
 
-  final public Expr EXPR_MULT() throws ParseException {Expr esq, dir;
+  final public Expr EXPR_MULT() throws ParseException {Expr esq, dir; Token tokOp;
     esq = EXPR_PREFIXO();
     label_7:
     while (true) {
@@ -497,15 +497,15 @@ esq = new ExprBinaria(esq, dir, Operador.Menos);
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case ASTERISCO:{
-        jj_consume_token(ASTERISCO);
+        tokOp = jj_consume_token(ASTERISCO);
         dir = EXPR_PREFIXO();
-esq = new ExprBinaria(esq, dir, Operador.Mul);
+esq = new ExprBinaria(esq, dir, Operador.Mul, tokOp);
         break;
         }
       case BARRA:{
-        jj_consume_token(BARRA);
+        tokOp = jj_consume_token(BARRA);
         dir = EXPR_PREFIXO();
-esq = new ExprBinaria(esq, dir, Operador.Div);
+esq = new ExprBinaria(esq, dir, Operador.Div, tokOp);
         break;
         }
       default:
@@ -518,22 +518,22 @@ esq = new ExprBinaria(esq, dir, Operador.Div);
     throw new Error("Missing return statement in function");
   }
 
-  final public Expr EXPR_PREFIXO() throws ParseException {Expr expr;
+  final public Expr EXPR_PREFIXO() throws ParseException {Expr expr; Token tokOp;
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case MENOS:{
-      jj_consume_token(MENOS);
+      tokOp = jj_consume_token(MENOS);
       expr = FATOR();
-{if ("" != null) return new ExprUnaria(expr, Operador.Menos);}
+{if ("" != null) return new ExprUnaria(expr, Operador.Menos, tokOp);}
       break;
       }
     case NEGACAO:{
-      jj_consume_token(NEGACAO);
+      tokOp = jj_consume_token(NEGACAO);
       expr = FATOR();
-{if ("" != null) return new ExprUnaria(expr, Operador.Nao);}
+{if ("" != null) return new ExprUnaria(expr, Operador.Nao, tokOp);}
       break;
       }
     case MAIS:{
-      jj_consume_token(MAIS);
+      tokOp = jj_consume_token(MAIS);
       expr = FATOR();
 {if ("" != null) return expr;}
       break;
@@ -557,7 +557,7 @@ esq = new ExprBinaria(esq, dir, Operador.Div);
     throw new Error("Missing return statement in function");
   }
 
-  final public Expr EXPR_POSFIXO() throws ParseException {Expr expr;
+  final public Expr EXPR_POSFIXO() throws ParseException {Expr expr; Token tokOp;
     expr = FATOR();
     label_8:
     while (true) {
@@ -573,13 +573,13 @@ esq = new ExprBinaria(esq, dir, Operador.Div);
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case INCREMENTO:{
-        jj_consume_token(INCREMENTO);
-expr = new ExprUnaria(expr, Operador.IncPos);
+        tokOp = jj_consume_token(INCREMENTO);
+expr = new ExprUnaria(expr, Operador.IncPos, tokOp);
         break;
         }
       case DECREMENTO:{
-        jj_consume_token(DECREMENTO);
-expr = new ExprUnaria(expr, Operador.DecPos);
+        tokOp = jj_consume_token(DECREMENTO);
+expr = new ExprUnaria(expr, Operador.DecPos, tokOp);
         break;
         }
       default:
@@ -620,12 +620,12 @@ expr = new ExprUnaria(expr, Operador.DecPos);
         }
       case TRUE:{
         tok = jj_consume_token(TRUE);
-{if ("" != null) return new ExprBool(tok);}
+{if ("" != null) return new ExprBool(tok, true);}
         break;
         }
       case FALSE:{
         tok = jj_consume_token(FALSE);
-{if ("" != null) return new ExprBool(tok);}
+{if ("" != null) return new ExprBool(tok, false);}
         break;
         }
       case PAREN_ABRE:{

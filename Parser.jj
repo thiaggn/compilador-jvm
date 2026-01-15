@@ -68,12 +68,12 @@ Programa PROGRAMA(): { var nos = new ArrayList<No>(); No no; }
 {
 	<BEGIN_PROGRAM>
 	(
-		  LOOKAHEAD(2) no = DECL_VARIAVEL()	{ nos.add(no); }
-		| no = EXPR() <PONTO_VIRG> 			{ nos.add(no); }
-		| no = CMD_EXIBE()					{ nos.add(no); }
-		| no = CMD_FOR()					{ nos.add(no); }
-		| no = CMD_WHILE()					{ nos.add(no); }
-		| no = CMD_IF()						{ nos.add(no); }
+		  LOOKAHEAD(2) no = CMD_DECL_VARIAVEL()	{ nos.add(no); }
+		| no = EXPR() <PONTO_VIRG> 				{ nos.add(no); }
+		| no = CMD_EXIBE()						{ nos.add(no); }
+		| no = CMD_FOR()						{ nos.add(no); }
+		| no = CMD_WHILE()						{ nos.add(no); }
+		| no = CMD_IF()							{ nos.add(no); }
 		| <PONTO_VIRG>
 	)*
 	<END_PROGRAM> <EOF>
@@ -84,52 +84,52 @@ Bloco BLOCO(): { var nos = new ArrayList<No>(); No no; }
 {
 	<CHAVE_ABRE>
 	(
-		  LOOKAHEAD(2) no = DECL_VARIAVEL()	{ nos.add(no); }
-		| no = EXPR() <PONTO_VIRG> 			{ nos.add(no); }
-		| no = CMD_EXIBE()					{ nos.add(no); }
-		| no = CMD_FOR()					{ nos.add(no); }
-		| no = CMD_WHILE()					{ nos.add(no); }
-		| no = CMD_IF()						{ nos.add(no); }
+		  LOOKAHEAD(2) no = CMD_DECL_VARIAVEL()	{ nos.add(no); }
+		| no = EXPR() <PONTO_VIRG> 				{ nos.add(no); }
+		| no = CMD_EXIBE()						{ nos.add(no); }
+		| no = CMD_FOR()						{ nos.add(no); }
+		| no = CMD_WHILE()						{ nos.add(no); }
+		| no = CMD_IF()							{ nos.add(no); }
 		| <PONTO_VIRG>
 	)*
 	<CHAVE_FECHA>
 	{ return new Bloco(nos); }
 }
 
-DeclVariavel DECL_VARIAVEL(): { Id tipo, nome; Expr valor = null; }
+CmdDeclVariavel CMD_DECL_VARIAVEL(): { Id tipo, nome; Expr valor = null; }
 {
 	tipo = IDENT() nome = IDENT() (<ATRIB> valor = EXPR())? <PONTO_VIRG>
-	{ return new DeclVariavel(tipo, nome, valor); }
+	{ return new CmdDeclVariavel(tipo, nome, valor); }
 }
 
-CmdFor CMD_FOR(): {Expr init; Expr cond, update; Bloco bloco;} 
+CmdFor CMD_FOR(): {No init; Expr cond, update; Bloco bloco; Token tokFor; } 
 {
-	<FOR> <PAREN_ABRE> 
-		(LOOKAHEAD(2) init = EXPR() <PONTO_VIRG> | init = DECL_VARIAVEL())
+	tokFor = <FOR> <PAREN_ABRE> 
+		(LOOKAHEAD(2) init = EXPR() <PONTO_VIRG> | init = CMD_DECL_VARIAVEL())
 		cond = EXPR() <PONTO_VIRG> 
 		update = EXPR() 
 	<PAREN_FECHA> bloco = BLOCO()
 
-	{ return new CmdFor(init, cond, update, bloco); }
+	{ return new CmdFor(init, cond, update, bloco, tokFor); }
 }
 
-CmdExibe CMD_EXIBE(): {Expr expr;} 
+CmdExibe CMD_EXIBE(): {Expr expr; Token tokExibe;} 
 {
-	<EXIBE> expr = EXPR() <PONTO_VIRG> 
-	{ return new CmdExibe(expr); }
+	tokExibe = <EXIBE> expr = EXPR() <PONTO_VIRG> 
+	{ return new CmdExibe(expr, tokExibe); }
 }
 
-CmdWhile CMD_WHILE(): {Expr cond; Bloco bloco;}
+CmdWhile CMD_WHILE(): {Expr cond; Bloco bloco; Token tokWhile;}
 {
-	<WHILE> <PAREN_ABRE> cond = EXPR() <PAREN_FECHA> <DO> bloco = BLOCO()
-	{ return new CmdWhile(cond, bloco); } 
+	tokWhile = <WHILE> <PAREN_ABRE> cond = EXPR() <PAREN_FECHA> <DO> bloco = BLOCO()
+	{ return new CmdWhile(cond, bloco, tokWhile); } 
 }
 
-CmdIf CMD_IF(): {Expr cond; Bloco blocoEntao, blocoSenao = null; CmdIf cmdSenao; } 
+CmdIf CMD_IF(): {Expr cond; Bloco blocoEntao, blocoSenao = null; CmdIf cmdSenao; Token tokIf; } 
 {
-	<IF> <PAREN_ABRE> cond = EXPR() <PAREN_FECHA> <THEN> blocoEntao = BLOCO()
+	tokIf = <IF> <PAREN_ABRE> cond = EXPR() <PAREN_FECHA> <THEN> blocoEntao = BLOCO()
 	(<ELSE> cmdSenao = CMD_IF() { blocoSenao = new Bloco(cmdSenao); })?
-	{ return new CmdIf(cond, blocoEntao, blocoSenao); }
+	{ return new CmdIf(cond, blocoEntao, blocoSenao, tokIf); }
 }
 
 Expr EXPR(): {Expr expr;} 
@@ -154,72 +154,72 @@ Expr EXPR_TERNARIA(): {Expr cond, esq, dir; }
 	{ return cond; }
 }
 
-Expr EXPR_LOGICO(): {Expr esq, dir;}
+Expr EXPR_LOGICO(): {Expr esq, dir; Token tokOp; }
 {
 	esq = EXPR_IGUAL() 
 	(
-		  <OR>  dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.Disj); }
-		| <AND> dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.Conj); } 
+		  tokOp = <OR>  dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.Disj, tokOp); }
+		| tokOp = <AND> dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.Conj, tokOp); } 
 	)*
 	{ return esq; }
 }
 
-Expr EXPR_IGUAL(): {Expr esq, dir;}
+Expr EXPR_IGUAL(): {Expr esq, dir; Token tokOp;}
 {
 	esq = EXPR_RELACIONAL() 
 	(
-		  <IGUAL> 	  dir = EXPR_RELACIONAL() { esq = new ExprBinaria(esq, dir, Operador.Igual); }
-		| <DIFERENTE> dir = EXPR_RELACIONAL() { esq = new ExprBinaria(esq, dir, Operador.Dif); }
+		  tokOp = <IGUAL> 	  dir = EXPR_RELACIONAL() { esq = new ExprBinaria(esq, dir, Operador.Igual, tokOp); }
+		| tokOp = <DIFERENTE> dir = EXPR_RELACIONAL() { esq = new ExprBinaria(esq, dir, Operador.Dif, tokOp); }
 	)*
 	{ return esq; }
 }
 
-Expr EXPR_RELACIONAL(): {Expr esq, dir;} 
+Expr EXPR_RELACIONAL(): {Expr esq, dir; Token tokOp;} 
 {
 	esq = EXPR_ADICAO() 
 	(
-		  <MAIOR> 	  	dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.Maior); }
-		| <MAIOR_IGUAL> dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.MaiorIg); }
-		| <MENOR>		dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.Menor); }
-		| <MENOR_IGUAL> dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.MenorIg); }
+		  tokOp = <MAIOR> 	  	dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.Maior, tokOp); }
+		| tokOp = <MAIOR_IGUAL> dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.MaiorIg, tokOp); }
+		| tokOp = <MENOR>		dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.Menor, tokOp); }
+		| tokOp = <MENOR_IGUAL> dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.MenorIg, tokOp); }
 	)*
 	{ return esq; }
 }
 
-Expr EXPR_ADICAO(): {Expr esq, dir;}
+Expr EXPR_ADICAO(): {Expr esq, dir; Token tokOp;}
 {
 	esq = EXPR_MULT() 
 	(
-		  <MAIS>  dir = EXPR_MULT() { esq = new ExprBinaria(esq, dir, Operador.Mais); }
-		| <MENOS> dir = EXPR_MULT() { esq = new ExprBinaria(esq, dir, Operador.Menos); }
+		  tokOp = <MAIS>  dir = EXPR_MULT() { esq = new ExprBinaria(esq, dir, Operador.Mais, tokOp); }
+		| tokOp = <MENOS> dir = EXPR_MULT() { esq = new ExprBinaria(esq, dir, Operador.Menos, tokOp); }
 	)*
 	{ return esq; }
 }
 
-Expr EXPR_MULT(): {Expr esq, dir;}
+Expr EXPR_MULT(): {Expr esq, dir; Token tokOp; }
 {
 	esq = EXPR_PREFIXO() 
 	(
-		  <ASTERISCO> dir = EXPR_PREFIXO() { esq = new ExprBinaria(esq, dir, Operador.Mul); }
-		| <BARRA>	  dir = EXPR_PREFIXO() { esq = new ExprBinaria(esq, dir, Operador.Div); }
+		  tokOp = <ASTERISCO> dir = EXPR_PREFIXO() { esq = new ExprBinaria(esq, dir, Operador.Mul, tokOp); }
+		| tokOp = <BARRA>	  dir = EXPR_PREFIXO() { esq = new ExprBinaria(esq, dir, Operador.Div, tokOp); }
 	)*
 	{ return esq; }
 }
 
-Expr EXPR_PREFIXO(): { Expr expr; } 
+Expr EXPR_PREFIXO(): { Expr expr; Token tokOp; } 
 {
-	  <MENOS> expr = FATOR()   { return new ExprUnaria(expr, Operador.Menos); }
-	| <NEGACAO> expr = FATOR() { return new ExprUnaria(expr, Operador.Nao); }
-	| <MAIS> expr = FATOR()	   { return expr; }
+	  tokOp = <MENOS> expr = FATOR()   { return new ExprUnaria(expr, Operador.Menos, tokOp); }
+	| tokOp = <NEGACAO> expr = FATOR() { return new ExprUnaria(expr, Operador.Nao, tokOp); }
+	| tokOp = <MAIS> expr = FATOR()	   { return expr; }
 	| expr = EXPR_POSFIXO()	   { return expr; }
 }
 
-Expr EXPR_POSFIXO(): {Expr expr;} 
+Expr EXPR_POSFIXO(): {Expr expr; Token tokOp; } 
 {
 	expr = FATOR()
 	(
-		  <INCREMENTO> { expr = new ExprUnaria(expr, Operador.IncPos); }
-		| <DECREMENTO> { expr = new ExprUnaria(expr, Operador.DecPos); }
+		  tokOp = <INCREMENTO> { expr = new ExprUnaria(expr, Operador.IncPos, tokOp); }
+		| tokOp = <DECREMENTO> { expr = new ExprUnaria(expr, Operador.DecPos, tokOp); }
 	)*
 	{ return expr; }
 }
@@ -231,8 +231,8 @@ Expr FATOR(): {Expr expr; Token tok;}
 	| tok = <LITERAL_FLOAT>      			   { return new ExprFloat(tok); }
 	| tok = <LITERAL_INT>	       			   { return new ExprInteiro(tok); }
 	| tok = <STRING>		 	   			   { return new ExprString(tok); }
-	| tok = <TRUE>							   { return new ExprBool(tok); }
-	| tok = <FALSE>							   { return new ExprBool(tok); }
+	| tok = <TRUE>							   { return new ExprBool(tok, true); }
+	| tok = <FALSE>							   { return new ExprBool(tok, false); }
 	| <PAREN_ABRE> expr = EXPR() <PAREN_FECHA> { return expr; }
 }
 

@@ -2,7 +2,7 @@ package ast;
 import ast.simbolo.SimboloNome;
 import parser.Token;
 
-public class ExprId implements Expr
+public class ExprId extends Expr
 {
 	public Posicao     posicao;
 	public String 	   nome;
@@ -10,8 +10,10 @@ public class ExprId implements Expr
 
 	public ExprId(Token token)
 	{
+		super(token.beginLine, token.beginColumn, Tipo.Indeterminado);
 		this.posicao = new Posicao(token);
-		this.nome = token.image;
+		this.nome 	 = token.image;
+		this.simbolo = null;
 	}
 
 	@Override
@@ -20,11 +22,5 @@ public class ExprId implements Expr
 		Print.abreObjeto("ExprId");
 		Print.campoComObjeto("simbolo", this.simbolo);
 		Print.fechaObjeto();
-	}
-
-	@Override
-	public Posicao obterPosicao()
-	{
-		return this.posicao;
 	}
 }

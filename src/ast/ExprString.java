@@ -2,7 +2,7 @@ package ast;
 
 import parser.Token;
 
-public class ExprString implements Expr 
+public class ExprString extends Expr 
 {
 	public String valor;
 	public Token token;
@@ -10,6 +10,7 @@ public class ExprString implements Expr
 
 	public ExprString(Token tok) 
 	{
+		super(tok.beginLine, tok.beginColumn, Tipo.String);
 		this.token = tok;
 		this.valor = tok.image.substring(1, tok.image.length() - 1);
 		this.posicao = new Posicao(tok);
@@ -19,11 +20,5 @@ public class ExprString implements Expr
 	public void print() 
 	{
 		Print.valorDeCampo("\"" + this.valor + "\"");
-	}
-
-	@Override
-	public Posicao obterPosicao() 
-	{
-		return this.posicao;
 	}
 }

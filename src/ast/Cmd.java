@@ -1,5 +1,9 @@
 package ast;
 
-public interface Cmd extends No {
-	
+public abstract class Cmd extends No
+{
+	protected Cmd(int linha, int coluna)
+	{
+		super(linha, coluna);
+	}
 }

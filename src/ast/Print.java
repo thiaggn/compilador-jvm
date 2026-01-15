@@ -28,7 +28,6 @@ public class Print {
 		Print.fechaCampo();
 	}
 
-
 	public static void campoComValor(String nome, String valor) {
 		Print.abreCampo(nome);
 		Print.valorDeCampo(valor);
@@ -54,10 +53,6 @@ public class Print {
 
 	public static void valorDeCampo(String nome) {
 		Out.format("%s", nome);
-	}
-
-	public static void valorDeCampoObj(Printavel no) {
-		no.print();
 	}
 
 	private static void abreCampo(String nome) {

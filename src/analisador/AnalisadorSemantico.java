@@ -2,46 +2,48 @@ package analisador;
 
 import java.util.HashMap;
 
+import ast.No;
+import ast.Tipo;
 import ast.simbolo.*;
 
 public class AnalisadorSemantico
 {
 	static HashMap<String, SimboloFunc> funcoes;
-	static HashMap<String, Tipo> 		tipos;
+	static HashMap<String, ast.Tipo> 		tipos;
 	static PilhaDeEscopos 				escopos;
-	static Analise 						erros;
+	static Analise 						analise;
 
 	public static Analise analisar(ast.Programa programa) 
 	{
 		// antes, precisamos popular o escopo com os tipos e funções nativas da linguagem.
 		tipos = new HashMap<>();
-		tipos.put("float", 	Tipo.FLOAT);
-		tipos.put("int",   	Tipo.INT);
-		tipos.put("string", Tipo.STR);
-		tipos.put("FLOAT",  Tipo.FLOAT);
-		tipos.put("INT",    Tipo.INT);
-		tipos.put("STRING", Tipo.STR);
+		tipos.put("float", 	ast.Tipo.Float);
+		tipos.put("int",   	ast.Tipo.Inteiro);
+		tipos.put("string", ast.Tipo.String);
+		tipos.put("FLOAT",  ast.Tipo.Float);
+		tipos.put("INT",    ast.Tipo.Inteiro);
+		tipos.put("STRING", ast.Tipo.String);
 		
 		funcoes = new HashMap<>();
-		funcoes.put("tam", new SimboloFunc("tam", Tipo.INT, new Tipo[] { Tipo.STR }));
+		funcoes.put("tam", new SimboloFunc("tam", ast.Tipo.Inteiro, new ast.Tipo[] { ast.Tipo.Inteiro }));
 
 		escopos = new PilhaDeEscopos();
 		escopos.abrirEscopo();
-		erros = new Analise();
+		analise = new Analise();
 
 		// faz a análise de cada nó da árvore, produzindo erros caso existam.
 		for (ast.No no : programa.nos)
 		{
 			analisarNo(no);
 		}
-		return erros;
+		return analise;
 	}
 
 	static void analisarNo(ast.No no) 
 	{
 		switch (no) 
 		{
-			case ast.DeclVariavel   decl -> analisarDeclVariavel(decl);
+			case ast.CmdDeclVariavel   decl -> analisarDeclVariavel(decl);
 			case ast.ExprAtribuicao expr -> analisarExprAtribuicao(expr);
 			case ast.CmdWhile       cmd  -> analisarCmdWhile(cmd);
 			case ast.CmdFor         cmd  -> analisarCmdFor(cmd);
@@ -53,41 +55,41 @@ public class AnalisadorSemantico
 					analisarExprUnaria(expr);
 				}
 				else {
-					erros.add(expr, "tipo de expressão não permitida nesse contexto.");
+					addErro(expr.linha, expr.coluna, "tipo de expressão não permitida nesse contexto.");
 				}
 			}
 			default -> {
 				var msg = String.format(
 					"esperava-se uma declaração ou comando, obteve %s.", no.getClass().getName()
 				);
-				erros.add(no, msg);
+				addErro(0, 0, msg);
 			}
 		}
 	}
 
-	static void analisarDeclVariavel(ast.DeclVariavel decl)
+	static void analisarDeclVariavel(ast.CmdDeclVariavel decl)
 	{
 		boolean contemErros = false;
 		if (escopos.atual().contem(decl.identificador.nome))
 		{
-			erros.add(decl.identificador, "redeclação de variável.");
+			addErro(decl.identificador, "redeclação de variável.");
 			contemErros = true;
 		}
 
-		Tipo tipo = tipos.get(decl.tipo.nome);
+		ast.Tipo tipo = tipos.get(decl.tipo.nome);
 		if (tipo == null)
 		{
-			erros.add(decl.tipo, "declaração de variável com tipo desconhecido.");
+			addErro(decl.tipo, "declaração de variável com tipo desconhecido.");
 			contemErros = true;
 		}
 
 		if (decl.exprInicial != null)
 		{
-			Tipo tipoExpr = analisarExpr(decl.exprInicial);
-			if (tipoExpr.ehInvalido()) return;
+			ast.Tipo tipoExpr = analisarExpr(decl.exprInicial);
+			if (tipoExpr == ast.Tipo.Indeterminado) return;
 			else if (!compativeis(tipo, tipoExpr))
 			{
-				erros.add(decl.exprInicial, "inicialização de variável com tipo incompatível.");
+				addErro(decl.exprInicial, "inicialização de variável com tipo incompatível.");
 			}
 		}
 
@@ -99,7 +101,7 @@ public class AnalisadorSemantico
 		}
 	}
 
-	static Tipo analisarExpr(ast.Expr expr)
+	static ast.Tipo analisarExpr(ast.Expr expr)
 	{
 		return switch (expr) {
 			case ast.ExprBinaria    exprBin   -> analisarExprBinaria(exprBin);
@@ -107,10 +109,10 @@ public class AnalisadorSemantico
 			case ast.ExprTernaria   exprTern  -> analisarExprTernaria(exprTern);
 			case ast.ExprAtribuicao exprAtrib -> analisarExprAtribuicao(exprAtrib);
 			case ast.ExprId 		id 		  -> analisarExprId(id);
-			case ast.ExprBool    _ 		  	  -> Tipo.bool;
-			case ast.ExprFloat   _ 		  	  -> Tipo.FLOAT;
-			case ast.ExprInteiro _ 	  	  -> Tipo.INT;
-			case ast.ExprString  _ 	 	  	  -> Tipo.STR;
+			case ast.ExprBool       lit 	  -> lit.tipo;
+			case ast.ExprFloat   	lit 	  -> lit.tipo;
+			case ast.ExprInteiro 	lit 	  -> lit.tipo;
+			case ast.ExprString  	lit 	  -> lit.tipo;
 
 			default -> {
 				throw new Error(String.format(
@@ -120,7 +122,7 @@ public class AnalisadorSemantico
 		};
 	}
 
-	static Tipo analisarExprAtribuicao(ast.ExprAtribuicao atrib)
+	static ast.Tipo analisarExprAtribuicao(ast.ExprAtribuicao atrib)
 	{
 		SimboloNome simbolo = escopos.resolver(atrib.destino.nome);
 		atrib.simboloDestino  = simbolo;
@@ -133,7 +135,7 @@ public class AnalisadorSemantico
 		// referências à essa variável passam a apontar para o símbolo substituído.
 		if (simbolo != null)
 		{
-			Tipo tipoExprInicial = analisarExpr(atrib.exprInicial);
+			ast.Tipo tipoExprInicial = analisarExpr(atrib.exprInicial);
 			if (!compativeis(simbolo.tipo, tipoExprInicial))
 			{
 				SimboloNome novoSimbolo = new SimboloNome(simbolo.nome, tipoExprInicial);
@@ -147,7 +149,7 @@ public class AnalisadorSemantico
 		// como uma declaração com valor inicial.
 		else
 		{
-			Tipo tipo = analisarExpr(atrib.exprInicial);
+			ast.Tipo tipo = analisarExpr(atrib.exprInicial);
 
 			SimboloNome novoSimbolo = new SimboloNome(atrib.destino.nome, tipo);
 			escopos.declarar(novoSimbolo);
@@ -159,10 +161,10 @@ public class AnalisadorSemantico
 		}
 	}
 
-	static Tipo analisarExprBinaria(ast.ExprBinaria expr)
+	static ast.Tipo analisarExprBinaria(ast.ExprBinaria expr)
 	{
-		Tipo tipoEsq = analisarExpr(expr.esq);
-		Tipo tipoDir = analisarExpr(expr.dir);
+		ast.Tipo tipoEsq = analisarExpr(expr.esq);
+		ast.Tipo tipoDir = analisarExpr(expr.dir);
 
 		// se esq e dir forem primitivos, são compatíveis (ex.: float e int)
 		// se esq e dir forem o mesmo tipo, são compatíveis (ex.: int e int, string e string)
@@ -172,11 +174,11 @@ public class AnalisadorSemantico
 				"operação entre tipos incompatíveis: esquerda é '%s', direita é '%s'.",
 				tipoEsq.nome, tipoDir.nome
 			);
-			erros.add(expr, msg);
-			return Tipo.invalido;
+			addErro(expr, msg);
+			return ast.Tipo.Indeterminado;
 		}
 		// importante: strings são compatíveis, mas apenas com o operador '+' (concatenação)
-		else if (tipoDir.ehString() && tipoEsq.ehString())
+		else if (tipoDir == ast.Tipo.String && tipoEsq == ast.Tipo.String)
 		{
 			if (expr.op != ast.Operador.Mais)
 			{
@@ -184,33 +186,33 @@ public class AnalisadorSemantico
 					"operador '%s' não é permitido entre strings; apenas + é suportado.", 
 					expr.op.toString()
 				);
-				erros.add(expr, msg);
+				addErro(expr, msg);
 			}
 		}
 
 		return tipoEsq;
 	}
 
-	static Tipo analisarExprUnaria(ast.ExprUnaria exprUn)
+	static ast.Tipo analisarExprUnaria(ast.ExprUnaria exprUn)
 	{
 		return analisarExpr(exprUn.expr);
 	}
 
-	static Tipo analisarExprTernaria(ast.ExprTernaria expr)
+	static ast.Tipo analisarExprTernaria(ast.ExprTernaria expr)
 	{
 		boolean contemErros = false;
-		Tipo tipoCond 		= analisarExpr(expr.exprCondicao);
-		Tipo tipoEntao 		= analisarExpr(expr.exprEntao);
-		Tipo tipoSenao 		= analisarExpr(expr.exprSenao);
+		ast.Tipo tipoCond 		= analisarExpr(expr.exprCondicao);
+		ast.Tipo tipoEntao 		= analisarExpr(expr.exprEntao);
+		ast.Tipo tipoSenao 		= analisarExpr(expr.exprSenao);
 
 		if (!tipoCond.ehPrimitivo)
 		{
-			erros.add(expr.exprCondicao, "a condição de um operador ternário deve ser um primitivo.");
+			addErro(expr.exprCondicao, "a condição de um operador ternário deve ser um primitivo.");
 		}
 
 		if (!compativeis(tipoEntao, tipoSenao))
 		{
-			erros.add(expr, "um operador ternário deve retornar expressões do mesmo tipo.");
+			addErro(expr, "um operador ternário deve retornar expressões do mesmo tipo.");
 			contemErros = true;
 		}
 
@@ -218,16 +220,16 @@ public class AnalisadorSemantico
 			return tipoEntao;
 		}
 
-		return Tipo.invalido;
+		return ast.Tipo.Indeterminado;
 	}
 
-	static Tipo analisarExprChamadaFunc(ast.ExprFunc exprFunc)
+	static ast.Tipo analisarExprChamadaFunc(ast.ExprFunc exprFunc)
 	{
 		// trata o uso de uma função não declarada
 		SimboloFunc funcao = funcoes.get(exprFunc.identificador.nome);
 		if (funcao == null)
 		{
-			return Tipo.invalido;
+			return ast.Tipo.Indeterminado;
 		}
 
 		// trata quando argumentos estão faltando
@@ -237,13 +239,13 @@ public class AnalisadorSemantico
 				"função '%s' espera %d argumentos mas apenas %d foram fornecidos.", 
 				funcao.nome, funcao.parametros.length, exprFunc.argumentos.size()
 			);
-			erros.add(exprFunc, msg);
+			addErro(exprFunc, msg);
 		}
 		// trata quando tem argumentos em excesso
 		else if (exprFunc.argumentos.size() > funcao.parametros.length)
 		{
 			var msg = String.format("excesso de argumentos para a função %s.", funcao.nome);
-			erros.add(exprFunc, msg);
+			addErro(exprFunc, msg);
 		}
 
 		// verifica se o tipo de cada argumento corresponde o tipo do parâmetro que ele está
@@ -251,8 +253,8 @@ public class AnalisadorSemantico
 		for (int i = 0; i < funcao.parametros.length; i++)
 		{
 			ast.Expr exprArg 	   = exprFunc.argumentos.get(i);
-			Tipo tipoArgumento = analisarExpr(exprArg);
-			Tipo tipoParametro = funcao.parametros[i];
+			ast.Tipo tipoArgumento = analisarExpr(exprArg);
+			ast.Tipo tipoParametro = funcao.parametros[i];
 			
 			if (!compativeis(tipoArgumento, tipoParametro))
 			{
@@ -260,13 +262,13 @@ public class AnalisadorSemantico
 					"tipo incompatível no argumento %d de '%s': esperado '%s' mas encontrou '%s'.", 
 					i+1, funcao.nome, tipoParametro.nome, tipoArgumento.nome
 				);
-				erros.add(exprArg, msg);
+				addErro(exprArg, msg);
 			}
 		}
 		return funcao.tipoRetorno;
 	}
 
-	static Tipo analisarExprId(ast.ExprId id)
+	static ast.Tipo analisarExprId(ast.ExprId id)
 	{
 		SimboloNome simbolo = escopos.resolver(id.nome);
 		if (simbolo != null)
@@ -276,18 +278,18 @@ public class AnalisadorSemantico
 		} 
 		else 
 		{
-			erros.add(id, String.format("símbolo desconhecido '%s'.", id.nome));
-			return Tipo.invalido;
+			addErro(id, String.format("símbolo desconhecido '%s'.", id.nome));
+			return ast.Tipo.Indeterminado;
 		}
 	}
 
 	static void analisarCmdWhile(ast.CmdWhile cmd)
 	{
 		escopos.abrirEscopo();
-		Tipo tipoCond = analisarExpr(cmd.exprCondicao);
+		ast.Tipo tipoCond = analisarExpr(cmd.exprCondicao);
 		if (!tipoCond.ehPrimitivo)
 		{
-			erros.add(cmd.exprCondicao, "a condição do while deve ser uma expressão booleana.");
+			addErro(cmd.exprCondicao, "a condição do while deve ser uma expressão booleana.");
 		}
 		analisarBloco(cmd.bloco);
 		escopos.fecharEscopo();
@@ -295,10 +297,10 @@ public class AnalisadorSemantico
 
 	static void analisarCmdIf(ast.CmdIf cmd)
 	{
-		Tipo tipoCond = analisarExpr(cmd.exprCondicao);
+		ast.Tipo tipoCond = analisarExpr(cmd.exprCondicao);
 		if (!tipoCond.ehPrimitivo)
 		{
-			erros.add(cmd.exprCondicao, "a expressão de condição de um if deve resultar num primitivo.");
+			addErro(cmd.exprCondicao, "a expressão de condição de um if deve resultar num primitivo.");
 		}
 
 		analisarBloco(cmd.blocoEntao);
@@ -312,29 +314,29 @@ public class AnalisadorSemantico
 	{
 		escopos.abrirEscopo();
 
-		if (cmd.exprInicial instanceof ast.DeclVariavel decl)
+		if (cmd.exprInicial instanceof ast.CmdDeclVariavel decl)
 		{
 			analisarDeclVariavel(decl);
 		} 
-		else 
+		else if (cmd.exprInicial instanceof ast.Expr expr)
 		{
-			Tipo tipoInicial = analisarExpr(cmd.exprInicial);
+			ast.Tipo tipoInicial = analisarExpr(expr);
 			if (!tipoInicial.ehPrimitivo)
 			{
-				erros.add(cmd.exprInicial,  "o tipo da expressão inicial do laço loop deve ser um primitivo.");
+				addErro(cmd.exprInicial,  "o tipo da expressão inicial do laço loop deve ser um primitivo.");
 			}
 		}
 
-		Tipo tipoCond = analisarExpr(cmd.exprCond);
+		ast.Tipo tipoCond = analisarExpr(cmd.exprCond);
 		if (!tipoCond.ehPrimitivo)
 		{
-			erros.add(cmd.exprCond, "a expressão de condiçao de um laço for deve ser um primitivo.");
+			addErro(cmd.exprCond, "a expressão de condiçao de um laço for deve ser um primitivo.");
 		}
 
-		Tipo tipoUpdate = analisarExpr(cmd.exprUpdate);
+		ast.Tipo tipoUpdate = analisarExpr(cmd.exprUpdate);
 		if (!tipoUpdate.ehPrimitivo)
 		{
-			erros.add(cmd.exprUpdate, "a expressão de condiçao de um laço for deve ser um primitivo.");
+			addErro(cmd.exprUpdate, "a expressão de condiçao de um laço for deve ser um primitivo.");
 		}
 
 		analisarBloco(cmd.bloco);
@@ -356,10 +358,20 @@ public class AnalisadorSemantico
 		escopos.fecharEscopo();
 	}
 
-	static boolean compativeis(Tipo a, Tipo b)
+	static boolean compativeis(ast.Tipo a, ast.Tipo b)
 	{
-		if (a.ehInvalido() || b.ehInvalido()) return false;
+		if (a == Tipo.Indeterminado|| b == Tipo.Indeterminado) return false;
 		if (a.ehPrimitivo && b.ehPrimitivo) return true;
 		else return a.id == b.id;
+	}
+	
+	static void addErro(No no, String msg)
+	{
+		addErro(no.linha, no.coluna, msg);
+	}
+
+	static void addErro(int linha, int coluna, String msg)
+	{
+		addErro(linha, coluna, msg);
 	}
 }

@@ -2,28 +2,21 @@ package ast;
 
 import parser.Token;
 
-public class ExprFloat implements Expr 
+public class ExprFloat extends Expr 
 {
 	public double valor;
-	public Token token;
-	public Posicao posicao;
+	public Token  token;
 
 	public ExprFloat(Token tok)
 	{
+		super(tok.beginLine, tok.endColumn, Tipo.Float);
 		this.token = tok;
 		this.valor = Double.parseDouble(tok.image);
-		this.posicao = new Posicao(tok);
 	}
 
 	@Override
 	public void print()
 	{
 		Print.valorDeCampo(this.valor + " (float)");
-	}
-
-	@Override
-	public Posicao obterPosicao() 
-	{
-		return this.posicao;
 	}
 }
