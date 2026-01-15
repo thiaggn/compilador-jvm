@@ -88,6 +88,7 @@ i := 5;
 for (i := 0; i < 10; i++) {
 	i++ // incrementa o 'i' no escopo do laço
 }
+```
 ```go
 for (i := 10; 0; 0) { 
 	// não itera nenhuma vez
