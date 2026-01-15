@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Scanner;
 
 import analisador.AnalisadorSemantico;
 import parser.Parser;
