@@ -173,6 +173,7 @@ public class AnalisadorSemantico
 
 	static ast.No analisarAtribuicao(ast.ExprAtribuicao atrib)
 	{
+		System.out.println("entrou aqui");
 		Simbolo simbolo = escopos.resolver(atrib.destino.nome);
 
 		// Caso 1) Se uma atribuição não se refere a nenhuma variável existente em qualquer escopo,
@@ -617,10 +618,11 @@ public class AnalisadorSemantico
 	{
 		escopos.abrirEscopo(); // início do escopo do bloco
 		{
-			for (ast.No no : bloco.nos)
+			for (int i = 0; i < bloco.nos.size(); i++)
 			{
-				analisarNo(no);
+				bloco.nos.set(i, analisarNo(bloco.nos.get(i)));
 			}
+
 		}
 		escopos.fecharEscopo(); // fim do escopo do bloco
 	}

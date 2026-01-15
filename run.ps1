@@ -8,4 +8,4 @@ javac -d "./out" `
 	"./src/intermediario/*.java" `
 	"./src/*.java" &&
 
-Get-Content Entrada.txt | java -cp "./out" Main
+Get-Content Entrada2.txt | java -cp "./out" Main

@@ -1,17 +1,11 @@
 $BEGIN_PROGRAM
-FLOAT k;
-STRING s;
-FLOAT mult;
 
-k := 1.0;
-s := "Ola";
-a := 6.0;
-n := 2.0;
+float a := 5;
 
-h := 1;
+if (a > 5) then {
+	a := "string";
+}
 
-while(!h) do {
-    exibe s;
-    h := False;
-};
+exibe a;
+
 $END_PROGRAM
