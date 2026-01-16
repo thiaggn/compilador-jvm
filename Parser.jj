@@ -165,8 +165,8 @@ Expr EXPR_LOGICO(): {Expr esq, dir; Token tokOp; }
 {
 	esq = EXPR_IGUAL() 
 	(
-		  tokOp = <OR>  dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.Disj, tokOp); }
-		| tokOp = <AND> dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.Conj, tokOp); } 
+		  tokOp = <OR>  dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.Ou, tokOp); }
+		| tokOp = <AND> dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.E, tokOp); } 
 	)*
 	{ return esq; }
 }

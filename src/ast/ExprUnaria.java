@@ -19,7 +19,7 @@ public class ExprUnaria extends Expr
 	public void print()
 	{
 		Print.abreObjeto("ExprUnária");
-		Print.campoComValor("operador", op.name());
+		Print.campoComValor("operador", op.toString());
 		Print.campoComObjeto("expr", expr);
 		Print.fechaObjeto();
 	}

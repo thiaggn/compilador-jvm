@@ -197,7 +197,9 @@ public class AnalisadorSemantico
 		}
 		else
 		{
+			atrib.simboloDestino = simbolo;
 			atrib.exprInicial = analisarExpr(atrib.exprInicial);
+			
 			if (atrib.exprInicial.tipo == ast.Tipo.Indeterminado)
 			{
 				return atrib;
@@ -310,31 +312,30 @@ public class AnalisadorSemantico
 		if (simbolo == null)
 		{
 			erro(atrib, String.format("uso de identificador não declarado '%s'.", atrib.destino.nome));
+			return atrib;
 		}
 		else
 		{
+			atrib.simboloDestino = simbolo;
 			atrib.exprInicial = analisarExpr(atrib.exprInicial);
-			if (atrib.exprInicial.tipo == ast.Tipo.Indeterminado)
+
+			if (atrib.exprInicial.tipo != ast.Tipo.Indeterminado)
 			{
-				return atrib;
-			}
-			
-			// Quando o símbolo referenciado tem um tipo diferente da expressão atribuìda,
-			// o símbolo é redeclarado. No entanto, o símbolo deve ser dinâmico.
-			if (atrib.exprInicial.tipo != simbolo.tipo)
-			{
-				if (!simbolo.dinamico)
+				// Quando o símbolo referenciado tem um tipo diferente da expressão atribuìda,
+				// o símbolo é redeclarado. No entanto, o símbolo deve ser dinâmico.
+				if (atrib.exprInicial.tipo != simbolo.tipo && simbolo.dinamico)
+				{
+					Simbolo novoSimbolo = new Simbolo(simbolo.nome, atrib.exprInicial.tipo, true);
+					escopos.redeclarar(simbolo.nome, novoSimbolo);
+					atrib.tipo = atrib.exprInicial.tipo;
+					atrib.simboloDestino = novoSimbolo;
+				}
+				else 
 				{
 					erro(atrib, String.format("'%s' não permite redeclaração com outro tipo.", simbolo.nome));
-					return atrib;
 				}
-
-				Simbolo novoSimbolo = new Simbolo(simbolo.nome, atrib.exprInicial.tipo, true);
-				escopos.redeclarar(simbolo.nome, novoSimbolo);
-				atrib.tipo = atrib.exprInicial.tipo;
 			}
 		}
-
 		return atrib;
 	}
 
@@ -372,7 +373,7 @@ public class AnalisadorSemantico
 		}
 
 		// garante que operações lógicas sejam realizadas entre inteiros
-		if (expr.op == ast.Operador.Conj || expr.op == ast.Operador.Disj)
+		if (expr.op == ast.Operador.E || expr.op == ast.Operador.Ou)
 		{
 			if (expr.esq.tipo == ast.Tipo.Float || expr.esq.tipo == ast.Tipo.Double)
 			{
@@ -510,7 +511,7 @@ public class AnalisadorSemantico
 		Simbolo simbolo = escopos.resolver(id.nome);
 		if (simbolo != null)
 		{
-			id.referencia = simbolo.id;
+			id.simbolo = simbolo;
 			id.tipo = simbolo.tipo;
 		} 
 		else 

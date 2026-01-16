@@ -1,10 +1,12 @@
 package ast;
 
+import ast.simbolo.Simbolo;
 
 public class ExprAtribuicao extends Expr
 {
 	public Id 		   destino;
 	public Expr 	   exprInicial;
+	public Simbolo	   simboloDestino;
 
 	public ExprAtribuicao(Id destino, Expr valor)
 	{
@@ -17,7 +19,9 @@ public class ExprAtribuicao extends Expr
 	public void print()
 	{
 		Print.abreObjeto("ExprAtribuição");
-		Print.campoComValor("destino", this.destino.nome);
+		Print.campoComValor("destino", 
+			String.format("%s (%d)", this.simboloDestino.nome, this.simboloDestino.ref)
+		);
 		Print.campoComObjeto("valor", this.exprInicial);
 		Print.fechaObjeto();
 	}

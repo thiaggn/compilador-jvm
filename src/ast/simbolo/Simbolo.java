@@ -6,7 +6,7 @@ import ast.Tipo;
 
 public class Simbolo implements Printavel {
 	public final String  nome;
-	public final int 	 id;
+	public final int 	 ref;
 	public final Tipo 	 tipo;
 	public final boolean dinamico;
 	
@@ -14,7 +14,7 @@ public class Simbolo implements Printavel {
 	static int proximoId = 0;
 
 	public Simbolo(String nome, Tipo tipo, boolean dinamico) {
-		this.id = proximoId++;
+		this.ref = proximoId++;
 		this.nome = nome;
 		this.tipo = tipo;
 		this.idEscopo = -1;
@@ -25,7 +25,7 @@ public class Simbolo implements Printavel {
 	public void print() {
 		Print.abreObjeto("SimboloNome");
 		Print.campoComValor("nome", nome);
-		Print.campoComValor("referencia", String.format("%d", this.id));
+		Print.campoComValor("referencia", String.format("%d", this.ref));
 		Print.fechaObjeto();
 	}
 }

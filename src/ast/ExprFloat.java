@@ -17,6 +17,6 @@ public class ExprFloat extends Expr
 	@Override
 	public void print()
 	{
-		Print.valorDeCampo(this.valor + " (float)");
+		Print.valorDeCampo(String.format("\u001B[95m%.2f\u001B[0m", this.valor));
 	}
 }

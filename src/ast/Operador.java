@@ -12,8 +12,8 @@ public enum Operador {
 	Igual("=="),
 	Dif("!="),
 	Nao("!"),
-	Conj("&&"),
-	Disj("||"),
+	E("&&"),
+	Ou("||"),
 	IncPos("++"),
 	DecPos("--");
 

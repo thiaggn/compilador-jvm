@@ -31,8 +31,8 @@ public class CmdDeclVariavel extends Cmd
 	{
 		Print.abreObjeto("DeclVariável");
 		Print.campoComValor("nome", this.identificador.nome);
-		Print.campoComValor("referencia", String.format("%d", this.simbolo.id));
-		Print.campoComValor("tipo", this.tipo.nome);
+		Print.campoComValor("ref", String.format("%d", this.simbolo.ref));
+		Print.campoComValor("tipo", this.simbolo.tipo.nome);
 		if (this.exprInicial != null) {
 			Print.campoComObjeto("valor", this.exprInicial);
 		}

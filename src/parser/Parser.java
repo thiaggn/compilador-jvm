@@ -339,13 +339,13 @@ cond = new ExprTernaria(cond, esq, dir);
       case OR:{
         tokOp = jj_consume_token(OR);
         dir = EXPR_IGUAL();
-esq = new ExprBinaria(esq, dir, Operador.Disj, tokOp);
+esq = new ExprBinaria(esq, dir, Operador.Ou, tokOp);
         break;
         }
       case AND:{
         tokOp = jj_consume_token(AND);
         dir = EXPR_IGUAL();
-esq = new ExprBinaria(esq, dir, Operador.Conj, tokOp);
+esq = new ExprBinaria(esq, dir, Operador.E, tokOp);
         break;
         }
       default:
