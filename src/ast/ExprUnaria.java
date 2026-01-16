@@ -6,8 +6,7 @@ public class ExprUnaria extends Expr
 {
 	public Expr 	expr;
 	public Operador op;
-	public Posicao 	posicao;
-
+	
 	public ExprUnaria(Expr expr, Operador op, Token tokOp)
 	{
 		super(tokOp.beginLine, tokOp.beginColumn, Tipo.Indeterminado);

@@ -1,6 +1,6 @@
 package ast;
 
-public abstract class No implements Printavel
+public abstract class No implements Debug
 {
 	public final int linha;
 	public final int coluna;

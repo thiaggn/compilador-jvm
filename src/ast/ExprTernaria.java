@@ -2,16 +2,16 @@ package ast;
 
 public class ExprTernaria extends Expr
 {
-	public Expr    exprCond;
-	public Expr    exprEntao;
-	public Expr	   exprSenao;
+	public Expr exprCond;
+	public Expr exprEntao;
+	public Expr	exprSenao;
 
 	public ExprTernaria(Expr exprCondicao, Expr exprEntao, Expr exprSenao)
 	{
 		super(exprCondicao.linha, exprCondicao.coluna, Tipo.Indeterminado);
-		this.exprCond = exprCondicao;
-		this.exprEntao    = exprEntao;
-		this.exprSenao    = exprSenao;
+		this.exprCond  = exprCondicao;
+		this.exprEntao = exprEntao;
+		this.exprSenao = exprSenao;
 	}
 
 	@Override

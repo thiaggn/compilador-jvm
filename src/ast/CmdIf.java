@@ -4,15 +4,16 @@ import parser.Token;
 
 public class CmdIf extends Cmd
 {
-	public Expr exprCondicao;
-	public Bloco blocoEntao, blocoSenao;
+	public Expr  exprCondicao;
+	public Bloco blocoEntao;
+	public Bloco blocoSenao;
 
 	public CmdIf(Expr condicao, Bloco blocoEntao, Bloco blocoSenao, Token tokIf)
 	{
 		super(tokIf.beginLine, tokIf.beginColumn);
 		this.exprCondicao = condicao;
-		this.blocoEntao = blocoEntao;
-		this.blocoSenao = blocoSenao;
+		this.blocoEntao   = blocoEntao;
+		this.blocoSenao   = blocoSenao;
 	}
 
 	@Override

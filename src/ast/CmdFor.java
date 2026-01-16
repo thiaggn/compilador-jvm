@@ -13,11 +13,11 @@ public final class CmdFor extends Cmd
 	public CmdFor (Id varInicial, Expr exprInicial, Expr exprTeste, Expr exprIterativa, Bloco bloco, Token tokFor)
 	{
 		super(tokFor.beginLine, tokFor.beginColumn);
-		this.varInicial = varInicial;
-		this.exprInicial = exprInicial;
-		this.exprTeste = exprTeste;
+		this.varInicial    = varInicial;
+		this.exprInicial   = exprInicial;
+		this.exprTeste 	   = exprTeste;
 		this.exprIterativa = exprIterativa;
-		this.bloco = bloco;
+		this.bloco 		   = bloco;
 	}
 
 	@Override

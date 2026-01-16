@@ -1,5 +1,5 @@
 package ast;
 
-public interface Printavel {
+public interface Debug {
 	void print();
 }

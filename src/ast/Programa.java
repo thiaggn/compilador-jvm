@@ -3,7 +3,7 @@ package ast;
 import java.util.ArrayList;
 
 
-public class Programa implements Printavel {
+public class Programa implements Debug {
 	public ArrayList<No> nos;
 
 	public Programa(ArrayList<No> nos) {

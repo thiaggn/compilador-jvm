@@ -1,10 +1,10 @@
 package ast.simbolo;
 
 import ast.Print;
-import ast.Printavel;
+import ast.Debug;
 import ast.Tipo;
 
-public class Simbolo implements Printavel {
+public class Simbolo implements Debug {
 	public final String  nome;
 	public final int 	 ref;
 	public final Tipo 	 tipo;

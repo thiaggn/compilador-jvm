@@ -5,17 +5,17 @@ import ast.simbolo.Simbolo;
 
 public class CmdDeclVariavel extends Cmd
 {
-	public Id 		   identificador;
-	public Id 		   tipo;
-	public Expr 	   exprInicial;
+	public Id 	   identificador;
+	public Id 	   tipo;
+	public Expr	   exprInicial;
 	public Simbolo simbolo;
 
 	public CmdDeclVariavel(Id tipo, Id nome, Expr valor)
 	{
 		super(tipo.linha, tipo.coluna);
-		this.tipo = tipo;
+		this.tipo 		   = tipo;
 		this.identificador = nome;
-		this.exprInicial = valor;
+		this.exprInicial   = valor;
 	}
 
 	public CmdDeclVariavel(Id tipo, Id nome)

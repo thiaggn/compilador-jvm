@@ -4,14 +4,14 @@ import parser.Token;
 
 public class CmdWhile extends Cmd
 {
-	public Expr exprCondicao;
+	public Expr  exprCondicao;
 	public Bloco bloco;
 
 	public CmdWhile(Expr condicao, Bloco bloco, Token tokWhile)
 	{
 		super(tokWhile.beginLine, tokWhile.beginColumn);
 		this.exprCondicao = condicao;
-		this.bloco = bloco;
+		this.bloco 		  = bloco;
 	}
 
 	@Override
