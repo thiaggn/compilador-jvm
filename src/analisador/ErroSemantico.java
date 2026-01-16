@@ -3,14 +3,14 @@ package analisador;
 
 public class ErroSemantico
 {
-	public int linha;
-	public int coluna;
+	public int    linha;
+	public int    coluna;
 	public String descricao;
 
 	public ErroSemantico(int linha, int coluna, String descricao)
 	{
-		this.linha = linha;
-		this.coluna = coluna;
+		this.linha     = linha;
+		this.coluna    = coluna;
 		this.descricao = descricao;
 	}
 

@@ -18,7 +18,7 @@ public class ExprTernaria extends Expr
 	public void print()
 	{
 		Print.abreObjeto("ExprTernária");
-		Print.campoComValor("tipo:", this.tipo.nome);
+		Print.campoComValor("tipo", this.tipo.nome);
 		Print.campoComObjeto("condição", this.exprCond);
 		Print.campoComObjeto("expr_entao", this.exprEntao);
 		Print.campoComObjeto("expr_senao", this.exprSenao);

@@ -1,27 +1,7 @@
 $BEGIN_PROGRAM
 
-c := 3;
-float d := 3.0;
+c := 0 > 1 ? 1 * "c" : "ok";
 
-x := "ufes";
-exibe x;
-
-x := 1;
-exibe x + 1;
-
-if (x > 1) then {
-	x := "ceunes";
-	exibe x;
-
-	c := 15;
-	d := 15;
-
-	x := x + " espirito santo";
-	exibe x;
-}
-
-exibe c;
-exibe d;
-exibe x;
+d := c + 1;
 
 $END_PROGRAM
