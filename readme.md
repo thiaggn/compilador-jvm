@@ -1,3 +1,17 @@
+### Uso
+O uso é `./compilar <nome_do_arquivo> [--arvore]`. A flag `--arvore` vai exibir a árvore sintática para facilitar a depuração.
+```powershell
+./compilar Entrada.txt --arvore
+```
+
+Se o PowerShell não deixar executar o script, é só habilitar a execução para o usuário local (você) no terminal:
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+Ou temporariamente:
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process
+```
 ### Declaração de variáveis:
 
 São formas válidas de declarar variáveis:
