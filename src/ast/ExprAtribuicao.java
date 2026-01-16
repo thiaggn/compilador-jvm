@@ -1,7 +1,5 @@
 package ast;
 
-import ast.simbolo.Simbolo;
-
 public class ExprAtribuicao extends Expr
 {
 	public Id 		   destino;

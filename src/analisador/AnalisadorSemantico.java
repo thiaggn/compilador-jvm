@@ -3,15 +3,12 @@ package analisador;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import ast.ExprConversao;
-import ast.simbolo.*;
-
 public class AnalisadorSemantico
 {
-	static HashMap<String, SimboloFunc> funcoes;
-	static HashMap<String, ast.Tipo> 	tipos;
-	static PilhaDeEscopos 				escopos;
-	static ArrayList<ErroSemantico> 	erros;
+	static HashMap<String, ast.SimboloFunc> funcoes;
+	static HashMap<String, ast.Tipo> 		tipos;
+	static PilhaDeEscopos 					escopos;
+	static ArrayList<ErroSemantico> 		erros;
 
 	public static Analise analisar(ast.Programa programa) 
 	{
@@ -34,7 +31,7 @@ public class AnalisadorSemantico
 		tipos.put("LONG", 	ast.Tipo.Long);
 		
 		funcoes = new HashMap<>();
-		funcoes.put("tam", new SimboloFunc("tam", ast.Tipo.Inteiro, new ast.Tipo[] { ast.Tipo.String }));
+		funcoes.put("tam", new ast.SimboloFunc("tam", ast.Tipo.Inteiro, new ast.Tipo[] { ast.Tipo.String }));
 
 		escopos = new PilhaDeEscopos();
 		escopos.abrirEscopo();
@@ -151,7 +148,7 @@ public class AnalisadorSemantico
 
 					if (pExpr != pDecl)
 					{
-						decl.exprInicial = new ExprConversao(decl.exprInicial, declTipo);
+						decl.exprInicial = new ast.ExprConversao(decl.exprInicial, declTipo);
 					}
 				}
 				else
@@ -167,7 +164,7 @@ public class AnalisadorSemantico
 
 		if (declaracaoEhValida)
 		{
-			Simbolo simbolo = new Simbolo(decl.identificador.nome, declTipo, false);
+			ast.Simbolo simbolo = new ast.Simbolo(decl.identificador.nome, declTipo, false);
 			decl.simbolo = simbolo;
 			escopos.declarar(simbolo);
 		}
@@ -177,7 +174,7 @@ public class AnalisadorSemantico
 
 	static ast.No analisarAtribuicao(ast.ExprAtribuicao atrib)
 	{
-		Simbolo simbolo = escopos.resolver(atrib.destino.nome);
+		ast.Simbolo simbolo = escopos.resolver(atrib.destino.nome);
 
 		// Caso 1) Se uma atribuição não se refere a nenhuma variável existente em qualquer escopo,
 		// ela cria uma nova variável (declaração).
@@ -188,7 +185,7 @@ public class AnalisadorSemantico
 		{
 			atrib.exprInicial = analisarExpr(atrib.exprInicial);
 	
-			Simbolo novoSimbolo = new Simbolo(atrib.destino.nome, atrib.exprInicial.tipo, true);
+			ast.Simbolo novoSimbolo = new ast.Simbolo(atrib.destino.nome, atrib.exprInicial.tipo, true);
 			escopos.declarar(novoSimbolo);
 
 			var decl = new ast.CmdDeclVariavel(
@@ -247,7 +244,7 @@ public class AnalisadorSemantico
 					return atrib;
 				}
 
-				Simbolo novoSimbolo = new Simbolo(simbolo.nome, atrib.exprInicial.tipo, true);
+				ast.Simbolo novoSimbolo = new ast.Simbolo(simbolo.nome, atrib.exprInicial.tipo, true);
 				escopos.redeclarar(simbolo.nome, novoSimbolo);
 				
 				var decl = new ast.CmdDeclVariavel(
@@ -268,7 +265,7 @@ public class AnalisadorSemantico
 			// }
 			// exibe y;  <-- imprime "joão"
 			// 
-			Simbolo novoSimbolo = new Simbolo(simbolo.nome, atrib.exprInicial.tipo, true);
+			ast.Simbolo novoSimbolo = new ast.Simbolo(simbolo.nome, atrib.exprInicial.tipo, true);
 			escopos.declarar(novoSimbolo);
 
 			var decl = new ast.CmdDeclVariavel(
@@ -315,7 +312,7 @@ public class AnalisadorSemantico
 		// int y := 20;
 		// int z := x := y;  <-- 'y' se mantém como 20, 'x' e 'z' se tornam 20.
 
-		Simbolo simbolo = escopos.resolver(atrib.destino.nome);
+		ast.Simbolo simbolo = escopos.resolver(atrib.destino.nome);
 		
 		// Expressões de atribuição sempre devem referenciar um símbolo existente.
 		//
@@ -337,7 +334,7 @@ public class AnalisadorSemantico
 				// o símbolo é redeclarado. No entanto, o símbolo deve ser dinâmico.
 				if (atrib.exprInicial.tipo != simbolo.tipo && simbolo.dinamico)
 				{
-					Simbolo novoSimbolo = new Simbolo(simbolo.nome, atrib.exprInicial.tipo, true);
+					ast.Simbolo novoSimbolo = new ast.Simbolo(simbolo.nome, atrib.exprInicial.tipo, true);
 					escopos.redeclarar(simbolo.nome, novoSimbolo);
 					atrib.tipo = atrib.exprInicial.tipo;
 					atrib.simboloDestino = novoSimbolo;
@@ -389,11 +386,11 @@ public class AnalisadorSemantico
 		{
 			if (expr.esq.tipo == ast.Tipo.Float || expr.esq.tipo == ast.Tipo.Double)
 			{
-				expr.esq = new ExprConversao(expr.esq, ast.Tipo.Inteiro);
+				expr.esq = new ast.ExprConversao(expr.esq, ast.Tipo.Inteiro);
 			}
 			if (expr.dir.tipo == ast.Tipo.Float || expr.dir.tipo == ast.Tipo.Double)
 			{
-				expr.dir = new ExprConversao(expr.dir, ast.Tipo.Inteiro);
+				expr.dir = new ast.ExprConversao(expr.dir, ast.Tipo.Inteiro);
 			}
 
 			expr.tipo = ast.Tipo.Inteiro;
@@ -405,11 +402,11 @@ public class AnalisadorSemantico
 
 		if (pEsq > pDir) 
 		{
-			expr.dir = new ExprConversao(expr.dir, expr.esq.tipo);
+			expr.dir = new ast.ExprConversao(expr.dir, expr.esq.tipo);
 		}
 		else if (pDir > pEsq)
 		{
-			expr.esq = new ExprConversao(expr.esq, expr.dir.tipo);
+			expr.esq = new ast.ExprConversao(expr.esq, expr.dir.tipo);
 		}
 
 		expr.tipo = expr.esq.tipo;
@@ -461,7 +458,7 @@ public class AnalisadorSemantico
 	static ast.Expr analisarExprFunc(ast.ExprFunc exprFunc)
 	{
 		// trata o uso de uma função não declarada
-		SimboloFunc funcao = funcoes.get(exprFunc.identificador.nome);
+		ast.SimboloFunc funcao = funcoes.get(exprFunc.identificador.nome);
 		if (funcao == null)
 		{
 			erro(exprFunc, String.format("chamada de função não declarada '%s'", exprFunc.identificador.nome));
@@ -501,7 +498,7 @@ public class AnalisadorSemantico
 
 					if (pArg != pParam)
 					{
-						exprFunc.argumentos.set(i, new ExprConversao(exprArgumento, tipoDoParametro));
+						exprFunc.argumentos.set(i, new ast.ExprConversao(exprArgumento, tipoDoParametro));
 					}
 				}
 				else
@@ -520,7 +517,7 @@ public class AnalisadorSemantico
 
 	static ast.Expr analisarExprId(ast.ExprId id)
 	{
-		Simbolo simbolo = escopos.resolver(id.nome);
+		ast.Simbolo simbolo = escopos.resolver(id.nome);
 		if (simbolo != null)
 		{
 			id.simbolo = simbolo;
@@ -600,7 +597,7 @@ public class AnalisadorSemantico
 
 		escopos.abrirEscopo(); // início do escopo do laço for
 		{
-			escopos.declarar(new Simbolo(cmd.varInicial.nome, cmd.exprInicial.tipo, false));
+			escopos.declarar(new ast.Simbolo(cmd.varInicial.nome, cmd.exprInicial.tipo, false));
 			
 			cmd.exprTeste = analisarExpr(cmd.exprTeste);
 			cmd.exprIterativa = analisarExpr(cmd.exprIterativa);

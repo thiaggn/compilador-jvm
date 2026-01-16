@@ -1,6 +1,4 @@
-package ast.simbolo;
-
-import ast.Tipo;
+package ast;
 
 public class SimboloFunc {
 	public final String nome;

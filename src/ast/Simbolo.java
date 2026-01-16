@@ -1,8 +1,4 @@
-package ast.simbolo;
-
-import ast.Print;
-import ast.Debug;
-import ast.Tipo;
+package ast;
 
 public class Simbolo implements Debug {
 	public final String  nome;

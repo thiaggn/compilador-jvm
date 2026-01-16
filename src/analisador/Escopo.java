@@ -2,7 +2,7 @@ package analisador;
 
 import java.util.HashMap;
 
-import ast.simbolo.Simbolo;
+import ast.Simbolo;
 
 public class Escopo
 {

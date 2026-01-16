@@ -1,8 +1,5 @@
 package ast;
 
-
-import ast.simbolo.Simbolo;
-
 public class CmdDeclVariavel extends Cmd
 {
 	public Id 	   identificador;

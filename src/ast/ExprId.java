@@ -1,5 +1,4 @@
 package ast;
-import ast.simbolo.Simbolo;
 import parser.Token;
 
 public class ExprId extends Expr
