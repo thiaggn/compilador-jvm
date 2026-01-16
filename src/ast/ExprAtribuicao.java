@@ -20,7 +20,7 @@ public class ExprAtribuicao extends Expr
 	{
 		Print.abreObjeto("ExprAtribuição");
 		Print.campoComValor("destino", 
-			String.format("%s (%d)", this.simboloDestino.nome, this.simboloDestino.ref)
+			String.format("%s (%d, %s)", this.simboloDestino.nome, this.simboloDestino.ref, this.simboloDestino.tipo.nome)
 		);
 		Print.campoComObjeto("valor", this.exprInicial);
 		Print.fechaObjeto();

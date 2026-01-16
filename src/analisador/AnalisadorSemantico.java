@@ -209,7 +209,7 @@ public class AnalisadorSemantico
 				return atrib;
 			}
 			
-			// Caso 2) Se a atribuição se refere a uma variável existente e elas têm tipos iguais,
+			// Caso 2) Se a atribuição se refere a uma variável existente e elas têm tipos primitivos,
 			// ela atualiza o valor dessa variável.
 			//
 			// int a := 10;  <-- declara a como 10
@@ -219,8 +219,15 @@ public class AnalisadorSemantico
 			// }
 			// exibe a;  <-- imprime 1
 			//
-			if (atrib.exprInicial.tipo == simbolo.tipo)
+			if (atrib.exprInicial.tipo.ehPrimitivo && simbolo.tipo.ehPrimitivo)
 			{
+				int pTipo = prioridade(simbolo.tipo);
+				int pExpr = prioridade(atrib.exprInicial.tipo);
+
+				if (pTipo != pExpr)
+				{
+					atrib.exprInicial = new ast.ExprConversao(atrib.exprInicial, simbolo.tipo);
+				}
 				return atrib;
 			}
 

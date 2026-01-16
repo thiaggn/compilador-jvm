@@ -16,9 +16,7 @@ public class ExprId extends Expr
 	@Override
 	public void print()
 	{
-		Print.abreObjeto("ExprId");
-		Print.campoComValor("nome", String.format("\u001B[96m%s\u001B[0m (%d)", this.simbolo.nome, this.simbolo.ref));
-		Print.campoComValor("tipo", this.simbolo.tipo.nome);
-		Print.fechaObjeto();
+
+		Print.valorDeCampo(String.format("\u001B[96m%s\u001B[0m (%d, %s)", this.simbolo.nome, this.simbolo.ref, this.simbolo.tipo.nome));
 	}
 }

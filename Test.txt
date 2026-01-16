@@ -1,5 +1,27 @@
 $BEGIN_PROGRAM
 
-char a := 10.0;
+c := 3;
+float d := 3.0;
+
+x := "ufes";
+exibe x;
+
+x := 1;
+exibe x + 1;
+
+if (x > 1) then {
+	x := "ceunes";
+	exibe x;
+
+	c := 15;
+	d := 15;
+
+	x := x + " espirito santo";
+	exibe x;
+}
+
+exibe c;
+exibe d;
+exibe x;
 
 $END_PROGRAM
