@@ -132,11 +132,14 @@ else {
 ```
 
 ### Coerção de tipos
-Expressões são promovidas ou rebaixadas automaticamente. A prioridade é `double`, `float`, `long`, `int`, `short`, nessa ordem.
+Expressões são promovidas ou rebaixadas automaticamente. A prioridade é `double`, `float`, `long`, `int`, `short`, nessa ordem. A coerção ocorre da esquerda pra direita. O número de conversões pode variar a depender da posição das expressões. 
 
-A coerção ocorre da esquerda pra direita. O número de conversões pode variar a depender da posição das expressões. 
+Não é possível fazer coerção explícita. A notação a seguir é apenas um indicador visual.
 ```javascript
+// a = float(10)
 float a := 10; 
+
+// b = int(10.0)
 int b := 10.0;
 
 // c = 1 + 2 + 3 + 4.0
