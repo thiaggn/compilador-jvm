@@ -4,7 +4,7 @@ import parser.Token;
 
 public class ExprUnaria extends Expr
 {
-	public Expr 	expr;
+	public Expr     expr;
 	public Operador op;
 	
 	public ExprUnaria(Expr expr, Operador op, Token tokOp)

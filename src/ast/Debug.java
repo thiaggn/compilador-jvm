@@ -1,5 +1,6 @@
 package ast;
 
-public interface Debug {
+public interface Debug
+{
 	void print();
 }

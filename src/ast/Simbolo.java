@@ -2,8 +2,8 @@ package ast;
 
 public class Simbolo implements Debug {
 	public final String  nome;
-	public final int 	 ref;
-	public final Tipo 	 tipo;
+	public final int     ref;
+	public final Tipo    tipo;
 	public final boolean dinamico;
 	
 	public int idEscopo;

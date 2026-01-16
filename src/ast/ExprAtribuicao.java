@@ -2,14 +2,14 @@ package ast;
 
 public class ExprAtribuicao extends Expr
 {
-	public Id 		   destino;
-	public Expr 	   exprInicial;
-	public Simbolo	   simboloDestino;
+	public Id      destino;
+	public Expr    exprInicial;
+	public Simbolo simboloDestino;
 
 	public ExprAtribuicao(Id destino, Expr valor)
 	{
 		super(destino.linha, destino.coluna, Tipo.Indeterminado);
-		this.destino = destino;
+		this.destino     = destino;
 		this.exprInicial = valor;
 	}
 

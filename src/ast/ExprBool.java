@@ -5,7 +5,7 @@ import parser.Token;
 public final class ExprBool extends Expr
 {
 	public boolean valor;
-	public Token token;
+	public Token   token;
 
 	public ExprBool(Token token, boolean valor)
 	{

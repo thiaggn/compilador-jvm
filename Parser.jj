@@ -8,8 +8,10 @@ import ast.*;
 import java.util.ArrayList;
 
 @SuppressWarnings({ "unused"})
-public class Parser {
-	public Programa gerarAST() throws ParseException {
+public class Parser
+{
+	public Programa gerarAST() throws ParseException
+	{
 		return this.PROGRAMA();
 	}
 }
@@ -23,53 +25,46 @@ SKIP: {
 }
 
 TOKEN: {
-	  <CHAVE_FECHA:		"}">
-	| <CHAVE_ABRE:		"{">
-	| <PAREN_FECHA:		")">
-	| <PAREN_ABRE:		"(">
-	| <INTERROG:		"?">
-	| <DOIS_PONTOS:		":">
-	| <PONTO_VIRG:		";">
-	| <IGUAL:			"==">
-	| <DIFERENTE:		"!=">
-	| <NEGACAO:		"!">			
-	| <MENOR:			"<">
-	| <MENOR_IGUAL:		"<=">
-	| <MAIOR:			">">
-	| <MAIOR_IGUAL:		">=">
-	| <BARRA:			"/">
-	| <ASTERISCO:		"*">
-	| <VIRGULA:			",">
-	| <MENOS:			"-">
-	| <MAIS:			"+">
-	| <ATRIB:			":=">
-	| <INCREMENTO:		"++">
-	| <DECREMENTO:		"--">
-	| <OR:				"||">
-	| <AND:				"&&">
-	| <EXIBE:			"exibe">
-	| <TRUE:			"False">
-	| <FALSE:			"True">
-	| <WHILE:			"while">
-	| <DO:				"do">
-	| <FOR:				"for">
-	| <THEN:			"then">
-	| <IF:				"if">
-	| <ELSE:			"else">
-	| <BEGIN_PROGRAM: 	"$BEGIN_PROGRAM">
-	| <END_PROGRAM: 	"$END_PROGRAM">
-	| <STRING:			"\""(~["\"","\n","\r"])*"\"">
-	| <CHAR:
-		"'"
-		(
-			~["'", "\\", "\n", "\r"]
-		| "\\" ["n", "t", "r", "'", "\"", "\\"]
-		)
-		"'"
-	>
-	| <ID: 				(["A"-"Z"]|["a"-"z"]|"_")(["A"-"Z"]|["a"-"z"]|["0"-"9"]|"_")*>	
-	| <LITERAL_FLOAT: 	(["0"-"9"])+ "." (["0"-"9"])+>
-	| <LITERAL_INT:		(["0"-"9"])+>
+	  <CHAVE_FECHA:   "}">
+	| <CHAVE_ABRE:    "{">
+	| <PAREN_FECHA:   ")">
+	| <PAREN_ABRE:    "(">
+	| <INTERROG:      "?">
+	| <DOIS_PONTOS:   ":">
+	| <PONTO_VIRG:    ";">
+	| <IGUAL:         "==">
+	| <DIFERENTE:     "!=">
+	| <NEGACAO:       "!">			
+	| <MENOR:         "<">
+	| <MENOR_IGUAL:   "<=">
+	| <MAIOR:         ">">
+	| <MAIOR_IGUAL:   ">=">
+	| <BARRA:         "/">
+	| <ASTERISCO:     "*">
+	| <VIRGULA:       ",">
+	| <MENOS:         "-">
+	| <MAIS:          "+">
+	| <ATRIB:         ":=">
+	| <INCREMENTO:    "++">
+	| <DECREMENTO:    "--">
+	| <OR:            "||">
+	| <AND:           "&&">
+	| <EXIBE:         "exibe">
+	| <TRUE:          "False">
+	| <FALSE:         "True">
+	| <WHILE:         "while">
+	| <DO:            "do">
+	| <FOR:           "for">
+	| <THEN:          "then">
+	| <IF:            "if">
+	| <ELSE:          "else">
+	| <BEGIN_PROGRAM: "$BEGIN_PROGRAM">
+	| <END_PROGRAM:   "$END_PROGRAM">
+	| <STRING:        "\""(~["\"","\n","\r"])*"\"">
+	| <CHAR:          "'"(~["'", "\\", "\n", "\r"]| "\\" ["n", "t", "r", "'", "\"", "\\"])"'">
+	| <ID:            (["A"-"Z"]|["a"-"z"]|"_")(["A"-"Z"]|["a"-"z"]|["0"-"9"]|"_")*>	
+	| <LITERAL_FLOAT: (["0"-"9"])+ "." (["0"-"9"])+>
+	| <LITERAL_INT:   (["0"-"9"])+>
 }
 
 Programa PROGRAMA(): { var nos = new ArrayList<No>(); No no; } 
@@ -77,11 +72,11 @@ Programa PROGRAMA(): { var nos = new ArrayList<No>(); No no; }
 	<BEGIN_PROGRAM>
 	(
 		  LOOKAHEAD(2) no = CMD_DECL_VARIAVEL()	{ nos.add(no); }
-		| no = EXPR() <PONTO_VIRG> 				{ nos.add(no); }
-		| no = CMD_EXIBE()						{ nos.add(no); }
-		| no = CMD_FOR()						{ nos.add(no); }
-		| no = CMD_WHILE()						{ nos.add(no); }
-		| no = CMD_IF()							{ nos.add(no); }
+		| no = EXPR() <PONTO_VIRG>              { nos.add(no); }
+		| no = CMD_EXIBE(                       { nos.add(no); }
+		| no = CMD_FOR()                        { nos.add(no); }
+		| no = CMD_WHILE()                      { nos.add(no); }
+		| no = CMD_IF()                         { nos.add(no); }
 		| <PONTO_VIRG>
 	)*
 	<END_PROGRAM> <EOF>
@@ -92,12 +87,12 @@ Bloco BLOCO(): { var nos = new ArrayList<No>(); No no; }
 {
 	<CHAVE_ABRE>
 	(
-		  LOOKAHEAD(2) no = CMD_DECL_VARIAVEL()	{ nos.add(no); }
-		| no = EXPR() <PONTO_VIRG> 				{ nos.add(no); }
-		| no = CMD_EXIBE()						{ nos.add(no); }
-		| no = CMD_FOR()						{ nos.add(no); }
-		| no = CMD_WHILE()						{ nos.add(no); }
-		| no = CMD_IF()							{ nos.add(no); }
+		  LOOKAHEAD(2) no = CMD_DECL_VARIAVEL() { nos.add(no); }
+		| no = EXPR() <PONTO_VIRG>              { nos.add(no); }
+		| no = CMD_EXIBE()                      { nos.add(no); }
+		| no = CMD_FOR()                        { nos.add(no); }
+		| no = CMD_WHILE()                      { nos.add(no); }
+		| no = CMD_IF()                         { nos.add(no); }
 		| <PONTO_VIRG>
 	)*
 	<CHAVE_FECHA>
@@ -183,7 +178,7 @@ Expr EXPR_IGUAL(): {Expr esq, dir; Token tokOp;}
 {
 	esq = EXPR_RELACIONAL() 
 	(
-		  tokOp = <IGUAL> 	  dir = EXPR_RELACIONAL() { esq = new ExprBinaria(esq, dir, Operador.Igual, tokOp); }
+		  tokOp = <IGUAL>     dir = EXPR_RELACIONAL() { esq = new ExprBinaria(esq, dir, Operador.Igual, tokOp); }
 		| tokOp = <DIFERENTE> dir = EXPR_RELACIONAL() { esq = new ExprBinaria(esq, dir, Operador.Dif, tokOp); }
 	)*
 	{ return esq; }
@@ -193,9 +188,9 @@ Expr EXPR_RELACIONAL(): {Expr esq, dir; Token tokOp;}
 {
 	esq = EXPR_ADICAO() 
 	(
-		  tokOp = <MAIOR> 	  	dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.Maior, tokOp); }
+		  tokOp = <MAIOR>       dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.Maior, tokOp); }
 		| tokOp = <MAIOR_IGUAL> dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.MaiorIg, tokOp); }
-		| tokOp = <MENOR>		dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.Menor, tokOp); }
+		| tokOp = <MENOR>       dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.Menor, tokOp); }
 		| tokOp = <MENOR_IGUAL> dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.MenorIg, tokOp); }
 	)*
 	{ return esq; }
@@ -216,7 +211,7 @@ Expr EXPR_MULT(): {Expr esq, dir; Token tokOp; }
 	esq = EXPR_PREFIXO() 
 	(
 		  tokOp = <ASTERISCO> dir = EXPR_PREFIXO() { esq = new ExprBinaria(esq, dir, Operador.Mul, tokOp); }
-		| tokOp = <BARRA>	  dir = EXPR_PREFIXO() { esq = new ExprBinaria(esq, dir, Operador.Div, tokOp); }
+		| tokOp = <BARRA>     dir = EXPR_PREFIXO() { esq = new ExprBinaria(esq, dir, Operador.Div, tokOp); }
 	)*
 	{ return esq; }
 }
@@ -226,7 +221,7 @@ Expr EXPR_PREFIXO(): { Expr expr; Token tokOp; }
 	  tokOp = <MENOS> expr = FATOR()   { return new ExprUnaria(expr, Operador.Menos, tokOp); }
 	| tokOp = <NEGACAO> expr = FATOR() { return new ExprUnaria(expr, Operador.Nao, tokOp); }
 	| tokOp = <MAIS> expr = FATOR()	   { return expr; }
-	| expr = EXPR_POSFIXO()	   { return expr; }
+	| expr = EXPR_POSFIXO()	           { return expr; }
 }
 
 Expr EXPR_POSFIXO(): {Expr expr; Token tokOp; } 
@@ -241,14 +236,14 @@ Expr EXPR_POSFIXO(): {Expr expr; Token tokOp; }
 
 Expr FATOR(): {Expr expr; Token tok;} 
 {
-	  LOOKAHEAD(2) expr = EXPR_FUNC()	   	   { return expr; }
-	| expr = EXPR_ID() 						   { return expr; }
+	  LOOKAHEAD(2) expr = EXPR_FUNC()          { return expr; }
+	| expr = EXPR_ID()                         { return expr; }
 	| tok = <LITERAL_FLOAT>      			   { return new ExprFloat(tok); }
-	| tok = <LITERAL_INT>	       			   { return new ExprInteiro(tok); }
-	| tok = <STRING>		 	   			   { return new ExprString(tok); }
-	| tok = <CHAR>							   { return new ExprChar(tok); }
-	| tok = <TRUE>							   { return new ExprBool(tok, true); }
-	| tok = <FALSE>							   { return new ExprBool(tok, false); }
+	| tok = <LITERAL_INT>                      { return new ExprInteiro(tok); }
+	| tok = <STRING>                           { return new ExprString(tok); }
+	| tok = <CHAR>                             { return new ExprChar(tok); }
+	| tok = <TRUE>                             { return new ExprBool(tok, true); }
+	| tok = <FALSE>                            { return new ExprBool(tok, false); }
 	| <PAREN_ABRE> expr = EXPR() <PAREN_FECHA> { return expr; }
 }
 
@@ -271,4 +266,3 @@ Expr EXPR_FUNC(): {Id nome; var args = new ArrayList<Expr>(); Expr arg;}
 	<PAREN_FECHA>
 	{ return new ExprFunc(nome, args); }
 }
-

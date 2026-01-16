@@ -5,22 +5,27 @@ import java.util.HashMap;
 
 public class AnalisadorSemantico
 {
-	static HashMap<String, ast.SimboloFunc> funcoes;
-	static HashMap<String, ast.Tipo> 		tipos;
-	static PilhaDeEscopos 					escopos;
-	static ArrayList<ErroSemantico> 		erros;
+	static HashMap<String, ast.SimboloFunc>	funcoes;
+	static HashMap<String, ast.Tipo>        tipos;
+	static PilhaDeEscopos                   escopos;
+	static ArrayList<ErroSemantico>         erros;
+
+	static void erro(ast.No no, String msg)
+	{
+		erros.add(new ErroSemantico(no.linha, no.coluna, msg));
+	}
 
 	public static Analise analisar(ast.Programa programa) 
 	{
 		// Popula o escopo com os tipos e funções nativas da linguagem
 		tipos = new HashMap<>();
-		tipos.put("float", 	ast.Tipo.Float);
-		tipos.put("int",   	ast.Tipo.Inteiro);
+		tipos.put("float",  ast.Tipo.Float);
+		tipos.put("int",    ast.Tipo.Inteiro);
 		tipos.put("string", ast.Tipo.String);
-		tipos.put("bool", 	ast.Tipo.Bool);
-		tipos.put("char", 	ast.Tipo.Char);
-		tipos.put("short", 	ast.Tipo.Short);
-		tipos.put("long", 	ast.Tipo.Long);
+		tipos.put("bool",   ast.Tipo.Bool);
+		tipos.put("char",   ast.Tipo.Char);
+		tipos.put("short",  ast.Tipo.Short);
+		tipos.put("long",  ast.Tipo.Long);
 
 		tipos.put("FLOAT",  ast.Tipo.Float);
 		tipos.put("INT",    ast.Tipo.Inteiro);
@@ -56,13 +61,13 @@ public class AnalisadorSemantico
 		return switch (no) 
 		{
 			case ast.CmdDeclVariavel decl -> analisarDeclVariavel(decl);
-			case ast.CmdExibe 		 cmd  -> analisarCmdExibe(cmd);
+			case ast.CmdExibe        cmd  -> analisarCmdExibe(cmd);
 			case ast.CmdWhile        cmd  -> analisarCmdWhile(cmd);
 			case ast.CmdFor          cmd  -> analisarCmdFor(cmd);
-			case ast.CmdIf 			 cmd  -> analisarCmdIf(cmd);
+			case ast.CmdIf           cmd  -> analisarCmdIf(cmd);
 			case ast.ExprAtribuicao  expr -> analisarAtribuicao(expr);
 			case ast.ExprUnaria      expr -> analisarIncremento(expr);
-			case ast.ExprFunc 		 expr -> analisarExprFunc(expr);
+			case ast.ExprFunc        expr -> analisarExprFunc(expr);
 			default -> no;
 		};
 	}
@@ -284,12 +289,12 @@ public class AnalisadorSemantico
 			case ast.ExprUnaria     exprUn    -> analisarExprUnaria(exprUn);
 			case ast.ExprTernaria   exprTern  -> analisarExprTernaria(exprTern);
 			case ast.ExprAtribuicao exprAtrib -> analisarExprAtribuicao(exprAtrib);
-			case ast.ExprId 		id 		  -> analisarExprId(id);
+			case ast.ExprId         id        -> analisarExprId(id);
 			case ast.ExprBool       literal   -> literal;
-			case ast.ExprFloat   	literal   -> literal;
-			case ast.ExprInteiro 	literal   -> literal;
-			case ast.ExprString  	literal   -> literal;
-			case ast.ExprChar 		literal   -> literal;
+			case ast.ExprFloat      literal   -> literal;
+			case ast.ExprInteiro    literal   -> literal;
+			case ast.ExprString     literal   -> literal;
+			case ast.ExprChar       literal   -> literal;
 
 			default -> {
 				throw new Error(String.format(
@@ -419,9 +424,9 @@ public class AnalisadorSemantico
 
 	static ast.Expr analisarExprTernaria(ast.ExprTernaria expr)
 	{
-		expr.exprCond    	 = analisarExpr(expr.exprCond);
-		expr.exprEntao 	 	 = analisarExpr(expr.exprEntao);
-		expr.exprSenao 	 	 = analisarExpr(expr.exprSenao);
+		expr.exprCond  = analisarExpr(expr.exprCond);
+		expr.exprEntao = analisarExpr(expr.exprEntao);
+		expr.exprSenao = analisarExpr(expr.exprSenao);
 
 		if (expr.exprEntao.tipo != ast.Tipo.Indeterminado && expr.exprSenao.tipo != ast.Tipo.Indeterminado)
 		{
@@ -614,10 +619,5 @@ public class AnalisadorSemantico
 
 		}
 		escopos.fecharEscopo(); // fim do escopo do bloco
-	}
-
-	static void erro(ast.No no, String msg)
-	{
-		erros.add(new ErroSemantico(no.linha, no.coluna, msg));
 	}
 }

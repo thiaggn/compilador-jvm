@@ -7,7 +7,7 @@ import ast.Simbolo;
 public class Escopo
 {
 	HashMap<String, Simbolo> tabela;
-	public int 				 id;
+	public int               id;
 
 	static int proximoId = 0;
 

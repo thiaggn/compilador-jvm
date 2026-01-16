@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ExprFunc extends Expr
 {
-	public final Id 			 identificador;
+	public final Id              identificador;
 	public final ArrayList<Expr> argumentos;
 
 	public ExprFunc(Id nome, ArrayList<Expr> args)

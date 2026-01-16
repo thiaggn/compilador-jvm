@@ -17,7 +17,7 @@ public final class CmdFor extends Cmd
 		this.exprInicial   = exprInicial;
 		this.exprTeste 	   = exprTeste;
 		this.exprIterativa = exprIterativa;
-		this.bloco 		   = bloco;
+		this.bloco         = bloco;
 	}
 
 	@Override

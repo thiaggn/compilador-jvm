@@ -4,7 +4,7 @@ import parser.Token;
 
 public class ExprInteiro extends Expr 
 {
-	public int valor;
+	public int   valor;
 	public Token token;
 
 	public ExprInteiro(Token tok)

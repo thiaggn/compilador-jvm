@@ -5,7 +5,7 @@ import parser.Token;
 public class ExprString extends Expr 
 {
 	public String valor;
-	public Token token;
+	public Token  token;
 
 	public ExprString(Token tok) 
 	{

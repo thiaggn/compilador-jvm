@@ -11,7 +11,7 @@ public class CmdWhile extends Cmd
 	{
 		super(tokWhile.beginLine, tokWhile.beginColumn);
 		this.exprCondicao = condicao;
-		this.bloco 		  = bloco;
+		this.bloco        = bloco;
 	}
 
 	@Override
