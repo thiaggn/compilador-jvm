@@ -143,10 +143,7 @@ public class AnalisadorSemantico
 				// 
 				if (decl.exprInicial.tipo.ehPrimitivo && declTipo.ehPrimitivo)
 				{
-					int pExpr = prioridade(decl.exprInicial.tipo);
-					int pDecl = prioridade(declTipo);
-
-					if (pExpr != pDecl)
+					if (decl.exprInicial.tipo.prioridade != declTipo.prioridade)
 					{
 						decl.exprInicial = new ast.ExprConversao(decl.exprInicial, declTipo);
 					}
@@ -218,10 +215,7 @@ public class AnalisadorSemantico
 			//
 			if (atrib.exprInicial.tipo.ehPrimitivo && simbolo.tipo.ehPrimitivo)
 			{
-				int pTipo = prioridade(simbolo.tipo);
-				int pExpr = prioridade(atrib.exprInicial.tipo);
-
-				if (pTipo != pExpr)
+				if (simbolo.tipo.prioridade != atrib.exprInicial.tipo.prioridade)
 				{
 					atrib.exprInicial = new ast.ExprConversao(atrib.exprInicial, simbolo.tipo);
 				}
@@ -402,14 +396,12 @@ public class AnalisadorSemantico
 			return expr;
 		}
 
-		int pEsq = prioridade(expr.esq.tipo);
-		int pDir = prioridade(expr.dir.tipo);
 
-		if (pEsq > pDir) 
+		if (expr.esq.tipo.prioridade > expr.dir.tipo.prioridade) 
 		{
 			expr.dir = new ast.ExprConversao(expr.dir, expr.esq.tipo);
 		}
-		else if (pDir > pEsq)
+		else if (expr.dir.tipo.prioridade > expr.esq.tipo.prioridade)
 		{
 			expr.esq = new ast.ExprConversao(expr.esq, expr.dir.tipo);
 		}
@@ -417,20 +409,6 @@ public class AnalisadorSemantico
 		expr.tipo = expr.esq.tipo;
 		return expr;
 	}
-
-	static int prioridade(ast.Tipo tipo)
-	{
-		switch (tipo.id)
-		{
-			case ast.Tipo.ID_SHORT:  return 1;
-			case ast.Tipo.ID_INT: 	 return 2;
-			case ast.Tipo.ID_LONG: 	 return 3;
-			case ast.Tipo.ID_FLOAT:  return 4;
-			case ast.Tipo.ID_DOUBLE: return 5;
-			default: 				 return 0;
-		}
-	}
-
 
 	static ast.Expr analisarExprUnaria(ast.ExprUnaria exprUn)
 	{
@@ -498,10 +476,7 @@ public class AnalisadorSemantico
 			{
 				if (tipoDoParametro.ehPrimitivo && exprArgumento.tipo.ehPrimitivo)
 				{
-					int pArg = prioridade(exprArgumento.tipo);
-					int pParam = prioridade(tipoDoParametro);
-
-					if (pArg != pParam)
+					if (exprArgumento.tipo.prioridade != tipoDoParametro.prioridade)
 					{
 						exprFunc.argumentos.set(i, new ast.ExprConversao(exprArgumento, tipoDoParametro));
 					}
