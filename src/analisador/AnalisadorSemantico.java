@@ -206,8 +206,8 @@ public class AnalisadorSemantico
 				return atrib;
 			}
 			
-			// Caso 2) Se a atribuição se refere a uma variável existente e elas têm tipos primitivos,
-			// ela atualiza o valor dessa variável.
+			// Caso 2) Se a atribuição se refere a uma variável existente e elas têm tipos iguais 
+			// ou primitivos, ela atualiza o valor dessa variável.
 			//
 			// int a := 10;  <-- declara a como 10
 			// a := 5;   <-- atualiza a para 5
@@ -228,6 +228,11 @@ public class AnalisadorSemantico
 				return atrib;
 			}
 
+			if (atrib.exprInicial.tipo == simbolo.tipo)
+			{
+				return atrib;
+			}
+
 			// Caso 3) Se existir uma variável no mesmo escopo e o valor atribuído tiver tipo diferente,
 			// a atribuição cria uma nova variável com o novo tipo (redeclaração), “sombreando” a anterior.
 			//
@@ -240,7 +245,7 @@ public class AnalisadorSemantico
 			{
 				if (!simbolo.dinamico)
 				{
-					erro(atrib, String.format("'%s' não permite redeclaração com outro tipo.", simbolo.nome));
+					erro(atrib, String.format("'%s' não permite redeclaração com outro tipo. %s %s", simbolo.nome));
 					return atrib;
 				}
 
