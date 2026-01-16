@@ -17,6 +17,6 @@ public class ExprInteiro extends Expr
 	@Override
 	public void print()
 	{
-		Print.valorDeCampo(String.format("\u001B[95m%d\u001B[0m", this.valor, this.tipo.nome));
+		Print.valorDeCampo(String.format("\u001B[95m%di\u001B[0m", this.valor, this.tipo.nome));
 	}
 }

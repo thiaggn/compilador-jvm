@@ -38,6 +38,8 @@ public class Tipo
 	public static final Tipo Inteiro 	   = new Tipo("int", true, 32, ID_INT);
 	public static final Tipo Long		   = new Tipo("long", true, 64, ID_LONG);
 	public static final Tipo Short		   = new Tipo("short", true, 16, ID_SHORT);
-	public static final Tipo Indeterminado = new Tipo("<indeterminado>", false, 0, ID_INDETERMINADO);
+	public static final Tipo Indeterminado = new Tipo("<???>", false, 0, ID_INDETERMINADO);
 	public static final Tipo String		   = new Tipo("string", false, 64, ID_STRING);
+	public static final Tipo Bool 		   = new Tipo("bool", true, ID_INT);
+	public static final Tipo Char 		   = new Tipo("char", true, ID_SHORT);
 }

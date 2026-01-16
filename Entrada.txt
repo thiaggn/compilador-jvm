@@ -6,8 +6,9 @@ FLOAT k;
 INT j;
 FLOAT mult;
 
-n := 2.0;
+w := 'o';
 s := "Ola";
+n := 2.0;
 a := 6.0;
 k := 1.0;
 j := 10;

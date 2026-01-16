@@ -1,0 +1,5 @@
+$BEGIN_PROGRAM
+
+char a := 10.0;
+
+$END_PROGRAM

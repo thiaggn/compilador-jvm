@@ -20,14 +20,18 @@ public class AnalisadorSemantico
 		tipos.put("float", 	ast.Tipo.Float);
 		tipos.put("int",   	ast.Tipo.Inteiro);
 		tipos.put("string", ast.Tipo.String);
-		tipos.put("bool", 	ast.Tipo.Inteiro);
-		tipos.put("char", 	ast.Tipo.Short);
+		tipos.put("bool", 	ast.Tipo.Bool);
+		tipos.put("char", 	ast.Tipo.Char);
+		tipos.put("short", 	ast.Tipo.Short);
+		tipos.put("long", 	ast.Tipo.Long);
 
 		tipos.put("FLOAT",  ast.Tipo.Float);
 		tipos.put("INT",    ast.Tipo.Inteiro);
 		tipos.put("STRING", ast.Tipo.String);
-		tipos.put("BOOL", 	ast.Tipo.Inteiro);
-		tipos.put("CHAR", 	ast.Tipo.Short);
+		tipos.put("BOOL", 	ast.Tipo.Bool);
+		tipos.put("CHAR", 	ast.Tipo.Char);
+		tipos.put("SHORT", 	ast.Tipo.Short);
+		tipos.put("LONG", 	ast.Tipo.Long);
 		
 		funcoes = new HashMap<>();
 		funcoes.put("tam", new SimboloFunc("tam", ast.Tipo.Inteiro, new ast.Tipo[] { ast.Tipo.String }));
@@ -282,6 +286,7 @@ public class AnalisadorSemantico
 			case ast.ExprFloat   	literal   -> literal;
 			case ast.ExprInteiro 	literal   -> literal;
 			case ast.ExprString  	literal   -> literal;
+			case ast.ExprChar 		literal   -> literal;
 
 			default -> {
 				throw new Error(String.format(

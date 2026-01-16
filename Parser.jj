@@ -59,6 +59,14 @@ TOKEN: {
 	| <BEGIN_PROGRAM: 	"$BEGIN_PROGRAM">
 	| <END_PROGRAM: 	"$END_PROGRAM">
 	| <STRING:			"\""(~["\"","\n","\r"])*"\"">
+	| <CHAR:
+		"'"
+		(
+			~["'", "\\", "\n", "\r"]
+		| "\\" ["n", "t", "r", "'", "\"", "\\"]
+		)
+		"'"
+	>
 	| <ID: 				(["A"-"Z"]|["a"-"z"]|"_")(["A"-"Z"]|["a"-"z"]|["0"-"9"]|"_")*>	
 	| <LITERAL_FLOAT: 	(["0"-"9"])+ "." (["0"-"9"])+>
 	| <LITERAL_INT:		(["0"-"9"])+>
@@ -238,6 +246,7 @@ Expr FATOR(): {Expr expr; Token tok;}
 	| tok = <LITERAL_FLOAT>      			   { return new ExprFloat(tok); }
 	| tok = <LITERAL_INT>	       			   { return new ExprInteiro(tok); }
 	| tok = <STRING>		 	   			   { return new ExprString(tok); }
+	| tok = <CHAR>							   { return new ExprChar(tok); }
 	| tok = <TRUE>							   { return new ExprBool(tok, true); }
 	| tok = <FALSE>							   { return new ExprBool(tok, false); }
 	| <PAREN_ABRE> expr = EXPR() <PAREN_FECHA> { return expr; }

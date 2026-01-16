@@ -27,6 +27,7 @@ public class Parser implements ParserConstants {
       case FOR:
       case IF:
       case STRING:
+      case CHAR:
       case ID:
       case LITERAL_FLOAT:
       case LITERAL_INT:{
@@ -49,6 +50,7 @@ nos.add(no);
         case TRUE:
         case FALSE:
         case STRING:
+        case CHAR:
         case ID:
         case LITERAL_FLOAT:
         case LITERAL_INT:{
@@ -111,6 +113,7 @@ nos.add(no);
       case FOR:
       case IF:
       case STRING:
+      case CHAR:
       case ID:
       case LITERAL_FLOAT:
       case LITERAL_INT:{
@@ -133,6 +136,7 @@ nos.add(no);
         case TRUE:
         case FALSE:
         case STRING:
+        case CHAR:
         case ID:
         case LITERAL_FLOAT:
         case LITERAL_INT:{
@@ -286,6 +290,7 @@ blocoSenao = new Bloco(cmdSenao);
       case TRUE:
       case FALSE:
       case STRING:
+      case CHAR:
       case ID:
       case LITERAL_FLOAT:
       case LITERAL_INT:{
@@ -544,6 +549,7 @@ esq = new ExprBinaria(esq, dir, Operador.Div, tokOp);
     case TRUE:
     case FALSE:
     case STRING:
+    case CHAR:
     case ID:
     case LITERAL_FLOAT:
     case LITERAL_INT:{
@@ -618,6 +624,11 @@ expr = new ExprUnaria(expr, Operador.DecPos, tokOp);
       case STRING:{
         tok = jj_consume_token(STRING);
 {if ("" != null) return new ExprString(tok);}
+        break;
+        }
+      case CHAR:{
+        tok = jj_consume_token(CHAR);
+{if ("" != null) return new ExprChar(tok);}
         break;
         }
       case TRUE:{
@@ -711,6 +722,19 @@ args.add(arg);
     finally { jj_save(3, xla); }
   }
 
+  private boolean jj_3_1()
+ {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_9()
+ {
+    if (jj_3R_10()) return true;
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
   private boolean jj_3R_10()
  {
     if (jj_scan_token(ID)) return true;
@@ -743,19 +767,6 @@ args.add(arg);
     return false;
   }
 
-  private boolean jj_3_1()
- {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_9()
- {
-    if (jj_3R_10()) return true;
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
   /** Generated Token Manager. */
   public ParserTokenManager token_source;
   SimpleCharStream jj_input_stream;
@@ -778,7 +789,7 @@ args.add(arg);
       jj_la1_0 = new int[] {0xe0c04900,0xe0c04900,0xe0c04900,0xe0c04900,0x1000000,0x40,0x0,0xc0c04100,0x200,0x18000000,0x18000000,0x3000,0x3000,0x78000,0x78000,0xc00000,0xc00000,0x180000,0x180000,0xc0c04100,0x6000000,0x6000000,0xc0000100,0x200000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0xf15,0xf15,0xf15,0xf15,0x0,0x10,0x20,0xf00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xf00,0x0,0x0,0xf00,0x0,};
+      jj_la1_1 = new int[] {0x1f15,0x1f15,0x1f15,0x1f15,0x0,0x10,0x20,0x1f00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1f00,0x0,0x0,0x1f00,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[4];
   private boolean jj_rescan = false;
@@ -965,7 +976,7 @@ args.add(arg);
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[44];
+    boolean[] la1tokens = new boolean[45];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -982,7 +993,7 @@ args.add(arg);
         }
       }
     }
-    for (int i = 0; i < 44; i++) {
+    for (int i = 0; i < 45; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

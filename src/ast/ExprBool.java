@@ -9,7 +9,7 @@ public final class ExprBool extends Expr
 
 	public ExprBool(Token token, boolean valor)
 	{
-		super(token.beginLine, token.endColumn, Tipo.Inteiro);
+		super(token.beginLine, token.endColumn, Tipo.Bool);
 		this.token = token;
 		this.valor = valor;
 	}

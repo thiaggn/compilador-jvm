@@ -83,11 +83,13 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int STRING = 40;
   /** RegularExpression Id. */
-  int ID = 41;
+  int CHAR = 41;
   /** RegularExpression Id. */
-  int LITERAL_FLOAT = 42;
+  int ID = 42;
   /** RegularExpression Id. */
-  int LITERAL_INT = 43;
+  int LITERAL_FLOAT = 43;
+  /** RegularExpression Id. */
+  int LITERAL_INT = 44;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -135,6 +137,7 @@ public interface ParserConstants {
     "\"$BEGIN_PROGRAM\"",
     "\"$END_PROGRAM\"",
     "<STRING>",
+    "<CHAR>",
     "<ID>",
     "<LITERAL_FLOAT>",
     "<LITERAL_INT>",
