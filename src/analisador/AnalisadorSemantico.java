@@ -25,7 +25,7 @@ public class AnalisadorSemantico
 		tipos.put("bool",   ast.Tipo.Bool);
 		tipos.put("char",   ast.Tipo.Char);
 		tipos.put("short",  ast.Tipo.Short);
-		tipos.put("long",  ast.Tipo.Long);
+		tipos.put("long",   ast.Tipo.Long);
 
 		tipos.put("FLOAT",  ast.Tipo.Float);
 		tipos.put("INT",    ast.Tipo.Inteiro);
@@ -33,7 +33,7 @@ public class AnalisadorSemantico
 		tipos.put("BOOL", 	ast.Tipo.Bool);
 		tipos.put("CHAR", 	ast.Tipo.Char);
 		tipos.put("SHORT", 	ast.Tipo.Short);
-		tipos.put("LONG", 	ast.Tipo.Long);
+		tipos.put("LONG",   ast.Tipo.Long);
 		
 		funcoes = new HashMap<>();
 		funcoes.put("tam", new ast.SimboloFunc("tam", ast.Tipo.Inteiro, new ast.Tipo[] { ast.Tipo.String }));
@@ -60,7 +60,7 @@ public class AnalisadorSemantico
 	{
 		return switch (no) 
 		{
-			case ast.CmdDeclVariavel decl -> analisarDeclVariavel(decl);
+			case ast.CmdDeclVariavel cmd -> analisarDeclVariavel(cmd);
 			case ast.CmdExibe        cmd  -> analisarCmdExibe(cmd);
 			case ast.CmdWhile        cmd  -> analisarCmdWhile(cmd);
 			case ast.CmdFor          cmd  -> analisarCmdFor(cmd);
@@ -74,25 +74,12 @@ public class AnalisadorSemantico
 
 	static ast.No analisarIncremento(ast.ExprUnaria expr)
 	{
-		// Contexto: Analisa um incremento quando ele é usado como um comando.
-		// 
-		// int k := 5;
-		// for (i := 10; i < 5; i++) {		<-- usado como comando
-		//     k++;  <-- usado como comando
-		// } 
-		// 
-		// Obs.: Usar o método analisarExprUnaria() se o incremento estiver sendo usado de 
-		// fato como uma expressão.
-		// 
-		// int k := 5;
-		// i := k++;	<-- usado como expressão: i é '5', k é '6'.
-		// 
 		if (expr.op == ast.Operador.IncPos || expr.op == ast.Operador.DecPos)
 		{
 			analisarExprUnaria(expr);
 		}
 		else {
-			erro(expr, "tipo de expressão não permitida nesse contexto.");
+			erro(expr, "essa expressão não pode ser usada como um comando.");
 		}
 		return expr;
 	}
