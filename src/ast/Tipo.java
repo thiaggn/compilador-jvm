@@ -8,26 +8,25 @@ public class Tipo
 	public final int     bytes;
 	public final int     prioridade;
 
-	public static int proximoId 		 =  0;
+	public static int proximoId  =  0;
 	
 	public Tipo(String nome, boolean ehPrimitivo, int bytes)
 	{
 		this.ehPrimitivo = ehPrimitivo;
-		this.nome = nome;
-		this.bytes = bytes;
-		this.id = proximoId++;
-		this.prioridade = 0;
+		this.nome        = nome;
+		this.bytes       = bytes;
+		this.id          = proximoId++;
+		this.prioridade  = 0;
 	}
 	
-	private Tipo(String nome, boolean ehPrimitivo, int bytes,  int prioridade)
+	private Tipo(String nome, boolean ehPrimitivo, int bytes, int prioridade)
 	{
 		this.ehPrimitivo = ehPrimitivo;
-		this.nome = nome;
-		this.bytes = bytes;
-		this.id = proximoId++;
-		this.prioridade = prioridade;
+		this.nome        = nome;
+		this.bytes       = bytes;
+		this.id          = proximoId++;
+		this.prioridade  = prioridade;
 	}
-	
 	
 	public static final Tipo Double        = new Tipo("double", true, 64, 5);
 	public static final Tipo Float         = new Tipo("float", true, 32, 4);

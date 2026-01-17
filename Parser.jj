@@ -73,7 +73,7 @@ Programa PROGRAMA(): { var nos = new ArrayList<No>(); No no; }
 	(
 		  LOOKAHEAD(2) no = CMD_DECL_VARIAVEL()	{ nos.add(no); }
 		| no = EXPR() <PONTO_VIRG>              { nos.add(no); }
-		| no = CMD_EXIBE(                       { nos.add(no); }
+		| no = CMD_EXIBE()                      { nos.add(no); }
 		| no = CMD_FOR()                        { nos.add(no); }
 		| no = CMD_WHILE()                      { nos.add(no); }
 		| no = CMD_IF()                         { nos.add(no); }
@@ -242,8 +242,8 @@ Expr FATOR(): {Expr expr; Token tok;}
 	| tok = <LITERAL_INT>                      { return new ExprInteiro(tok); }
 	| tok = <STRING>                           { return new ExprString(tok); }
 	| tok = <CHAR>                             { return new ExprChar(tok); }
-	| tok = <TRUE>                             { return new ExprBool(tok, true); }
-	| tok = <FALSE>                            { return new ExprBool(tok, false); }
+	| tok = <TRUE>                             { return new ExprBool(true, tok); }
+	| tok = <FALSE>                            { return new ExprBool(false, tok); }
 	| <PAREN_ABRE> expr = EXPR() <PAREN_FECHA> { return expr; }
 }
 

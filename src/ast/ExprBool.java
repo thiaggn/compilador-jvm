@@ -1,16 +1,12 @@
 package ast;
 
-import parser.Token;
-
 public final class ExprBool extends Expr
 {
 	public boolean valor;
-	public Token   token;
 
-	public ExprBool(Token token, boolean valor)
+	public ExprBool(boolean valor, parser.Token token)
 	{
 		super(token.beginLine, token.endColumn, Tipo.Bool);
-		this.token = token;
 		this.valor = valor;
 	}
 

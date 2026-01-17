@@ -1,14 +1,12 @@
 package ast;
 
-import parser.Token;
-
 public class ExprBinaria extends Expr
 {
 	public Operador op;
 	public Expr     esq;
 	public Expr     dir;
 
-	public ExprBinaria(Expr esq, Expr dir, Operador op, Token tokOp)
+	public ExprBinaria(Expr esq, Expr dir, Operador op, parser.Token tokOp)
 	{
 		super(tokOp.beginLine, tokOp.beginColumn, Tipo.Indeterminado);
 		this.op  = op;

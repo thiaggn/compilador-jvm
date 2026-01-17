@@ -60,7 +60,7 @@ public class AnalisadorSemantico
 	{
 		return switch (no) 
 		{
-			case ast.CmdDeclVariavel cmd -> analisarDeclVariavel(cmd);
+			case ast.CmdDeclVariavel cmd  -> analisarDeclVariavel(cmd);
 			case ast.CmdExibe        cmd  -> analisarCmdExibe(cmd);
 			case ast.CmdWhile        cmd  -> analisarCmdWhile(cmd);
 			case ast.CmdFor          cmd  -> analisarCmdFor(cmd);
@@ -229,7 +229,7 @@ public class AnalisadorSemantico
 			//
 			if(escopos.atual().id == simbolo.idEscopo)
 			{
-				if (!simbolo.dinamico)
+				if (!simbolo.ehRedeclaravel)
 				{
 					erro(atrib, String.format("'%s' não permite redeclaração com outro tipo. %s %s", simbolo.nome));
 					return atrib;
@@ -323,7 +323,7 @@ public class AnalisadorSemantico
 			{
 				// Quando o símbolo referenciado tem um tipo diferente da expressão atribuìda,
 				// o símbolo é redeclarado. No entanto, o símbolo deve ser dinâmico.
-				if (!(atrib.exprInicial.tipo.ehPrimitivo && simbolo.tipo.ehPrimitivo) && simbolo.dinamico)
+				if (!(atrib.exprInicial.tipo.ehPrimitivo && simbolo.tipo.ehPrimitivo) && simbolo.ehRedeclaravel)
 				{
 					ast.Simbolo novoSimbolo = new ast.Simbolo(simbolo.nome, atrib.exprInicial.tipo, true);
 					escopos.redeclarar(simbolo.nome, novoSimbolo);

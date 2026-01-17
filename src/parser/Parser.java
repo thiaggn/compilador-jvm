@@ -6,7 +6,8 @@ import java.util.ArrayList;
 
 @SuppressWarnings({ "unused"})
 public class Parser implements ParserConstants {
-        public Programa gerarAST() throws ParseException {
+        public Programa gerarAST() throws ParseException
+        {
                 return this.PROGRAMA();
         }
 
@@ -633,12 +634,12 @@ expr = new ExprUnaria(expr, Operador.DecPos, tokOp);
         }
       case TRUE:{
         tok = jj_consume_token(TRUE);
-{if ("" != null) return new ExprBool(tok, true);}
+{if ("" != null) return new ExprBool(true, tok);}
         break;
         }
       case FALSE:{
         tok = jj_consume_token(FALSE);
-{if ("" != null) return new ExprBool(tok, false);}
+{if ("" != null) return new ExprBool(false, tok);}
         break;
         }
       case PAREN_ABRE:{
@@ -722,25 +723,6 @@ args.add(arg);
     finally { jj_save(3, xla); }
   }
 
-  private boolean jj_3_1()
- {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_9()
- {
-    if (jj_3R_10()) return true;
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_10()
- {
-    if (jj_scan_token(ID)) return true;
-    return false;
-  }
-
   private boolean jj_3_3()
  {
     if (jj_3R_10()) return true;
@@ -764,6 +746,25 @@ args.add(arg);
  {
     if (jj_3R_10()) return true;
     if (jj_scan_token(PAREN_ABRE)) return true;
+    return false;
+  }
+
+  private boolean jj_3_1()
+ {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_9()
+ {
+    if (jj_3R_10()) return true;
+    if (jj_3R_10()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_10()
+ {
+    if (jj_scan_token(ID)) return true;
     return false;
   }
 

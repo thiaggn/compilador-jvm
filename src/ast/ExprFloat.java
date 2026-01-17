@@ -1,16 +1,13 @@
 package ast;
 
-import parser.Token;
 
 public class ExprFloat extends Expr 
 {
 	public double valor;
-	public Token  token;
 
-	public ExprFloat(Token tok)
+	public ExprFloat(parser.Token tok)
 	{
 		super(tok.beginLine, tok.endColumn, Tipo.Float);
-		this.token = tok;
 		this.valor = Double.parseDouble(tok.image);
 	}
 

@@ -1,7 +1,5 @@
 package ast;
 
-import parser.Token;
-
 public final class CmdFor extends Cmd
 {
 	public Id    varInicial;  
@@ -10,13 +8,13 @@ public final class CmdFor extends Cmd
 	public Expr  exprIterativa;
 	public Bloco bloco;
 
-	public CmdFor (Id varInicial, Expr exprInicial, Expr exprTeste, Expr exprIterativa, Bloco bloco, Token tokFor)
+	public CmdFor (Id varInicial, Expr inicial, Expr teste, Expr iterativa, Bloco bloco, parser.Token tokFor)
 	{
 		super(tokFor.beginLine, tokFor.beginColumn);
 		this.varInicial    = varInicial;
-		this.exprInicial   = exprInicial;
-		this.exprTeste 	   = exprTeste;
-		this.exprIterativa = exprIterativa;
+		this.exprInicial   = inicial;
+		this.exprTeste 	   = teste;
+		this.exprIterativa = iterativa;
 		this.bloco         = bloco;
 	}
 

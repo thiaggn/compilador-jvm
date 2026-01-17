@@ -1,7 +1,5 @@
 $BEGIN_PROGRAM
 
-c := 0 > 1 ? 1 * "c" : "ok";
-
-d := c + 1;
+double a := 1 + 2 + 3 + 4.0;
 
 $END_PROGRAM

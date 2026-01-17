@@ -1,13 +1,11 @@
 package ast;
 
-import parser.Token;
-
 public class CmdWhile extends Cmd
 {
 	public Expr  exprCondicao;
 	public Bloco bloco;
 
-	public CmdWhile(Expr condicao, Bloco bloco, Token tokWhile)
+	public CmdWhile(Expr condicao, Bloco bloco, parser.Token tokWhile)
 	{
 		super(tokWhile.beginLine, tokWhile.beginColumn);
 		this.exprCondicao = condicao;
