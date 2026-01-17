@@ -6,4 +6,6 @@ for (i := i; i < 10; i++) {
 	exibe i;
 }
 
+i + 1;
+
 $END_PROGRAM

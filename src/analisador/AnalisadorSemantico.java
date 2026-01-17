@@ -3,6 +3,8 @@ package analisador;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import ast.Expr;
+
 public class AnalisadorSemantico
 {
 	static HashMap<String, ast.SimboloFunc>	funcoes;
@@ -72,7 +74,10 @@ public class AnalisadorSemantico
 			case ast.ExprAtribuicao  expr -> analisarAtribuicao(expr);
 			case ast.ExprUnaria      expr -> analisarIncremento(expr);
 			case ast.ExprFunc        expr -> analisarFunc(expr);
-			default -> no;
+			default -> {
+				erro(no, "essa expressão não pode ser usada como comando.");
+				yield no;
+			}
 		};
 	}
 
