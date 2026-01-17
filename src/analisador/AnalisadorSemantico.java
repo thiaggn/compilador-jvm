@@ -528,7 +528,7 @@ public class AnalisadorSemantico
 
 	static ast.CmdIf analisarCmdIf(ast.CmdIf cmd)
 	{
-		 analisarExpr(cmd.exprCondicao);
+		analisarExpr(cmd.exprCondicao);
 		if (!cmd.exprCondicao.tipo.ehPrimitivo)
 		{
 			erro(cmd.exprCondicao, "a expressão de condição de um if deve resultar num primitivo.");
@@ -568,11 +568,12 @@ public class AnalisadorSemantico
 	/// 
 	static ast.CmdFor analisarCmdFor(ast.CmdFor cmd)
 	{
-		analisarExpr(cmd.exprInicial);
+		analisarExpr(cmd.decl.exprInicial);
 
 		escopos.abrirEscopo(); // início do escopo do laço for
 		{
-			escopos.declarar(new ast.Simbolo(cmd.varInicial.nome, cmd.exprInicial.tipo, false));
+			cmd.decl.simbolo = new ast.Simbolo(cmd.varInicial.nome, cmd.decl.exprInicial.tipo, false);
+			escopos.declarar(cmd.decl.simbolo);
 			
 			analisarExpr(cmd.exprTeste);
 			analisarExpr(cmd.exprIterativa);

@@ -1,5 +1,9 @@
 $BEGIN_PROGRAM
 
-double a := 1 + 2 + 3 + 4.0;
+i := 10;
+
+for (i := i; i < 10; i++) {
+	exibe i;
+}
 
 $END_PROGRAM
