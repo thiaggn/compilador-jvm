@@ -4,15 +4,15 @@ public class Simbolo implements Debug
 {
 	public String  nome;
 	public int     ref;
-	public Tipo    tipo;
+	public SimboloTipo    tipo;
 	public boolean ehRedeclaravel;
 	public int     idEscopo;
 	
-	static int proximoId = 0;
+	static int proximaRef = 0;
 
-	public Simbolo(String nome, Tipo tipo, boolean ehRedeclaravel)
+	public Simbolo(String nome, SimboloTipo tipo, boolean ehRedeclaravel)
 	{
-		this.ref            = proximoId++;
+		this.ref            = proximaRef++;
 		this.nome           = nome;
 		this.tipo           = tipo;
 		this.idEscopo       = -1;

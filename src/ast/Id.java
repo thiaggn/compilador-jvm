@@ -6,19 +6,19 @@ public class Id extends Expr
 
 	public Id(parser.Token tok)
 	{
-		super(tok.beginLine, tok.beginColumn, Tipo.Indeterminado);
+		super(tok.beginLine, tok.beginColumn, SimboloTipo.Indeterminado);
 		this.nome = tok.image;
 	}
 
 	public Id(String nome, int linha, int coluna)
 	{
-		super(linha, coluna, Tipo.Indeterminado);
+		super(linha, coluna, SimboloTipo.Indeterminado);
 		this.nome = nome;
 	}
 
 	public Id(String nome)
 	{
-		super(0, 0, Tipo.Indeterminado);
+		super(0, 0, SimboloTipo.Indeterminado);
 		this.nome = nome;
 	}
 

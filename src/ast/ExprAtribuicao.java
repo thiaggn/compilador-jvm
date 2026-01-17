@@ -8,7 +8,7 @@ public class ExprAtribuicao extends Expr
 
 	public ExprAtribuicao(Id destino, Expr valor)
 	{
-		super(destino.linha, destino.coluna, Tipo.Indeterminado);
+		super(destino.linha, destino.coluna, SimboloTipo.Indeterminado);
 		this.destino     = destino;
 		this.exprInicial = valor;
 	}

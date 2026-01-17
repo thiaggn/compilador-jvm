@@ -8,7 +8,7 @@ public class ExprBinaria extends Expr
 
 	public ExprBinaria(Expr esq, Expr dir, Operador op, parser.Token tokOp)
 	{
-		super(tokOp.beginLine, tokOp.beginColumn, Tipo.Indeterminado);
+		super(tokOp.beginLine, tokOp.beginColumn, SimboloTipo.Indeterminado);
 		this.op  = op;
 		this.esq = esq;
 		this.dir = dir;

@@ -9,7 +9,7 @@ public class ExprString extends Expr
 
 	public ExprString(Token tok) 
 	{
-		super(tok.beginLine, tok.beginColumn, Tipo.String);
+		super(tok.beginLine, tok.beginColumn, SimboloTipo.String);
 		this.token = tok;
 		this.valor = tok.image.substring(1, tok.image.length() - 1);
 	}

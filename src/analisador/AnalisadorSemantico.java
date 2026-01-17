@@ -6,7 +6,7 @@ import java.util.HashMap;
 public class AnalisadorSemantico
 {
 	static HashMap<String, ast.SimboloFunc>	funcoes;
-	static HashMap<String, ast.Tipo>        tipos;
+	static HashMap<String, ast.SimboloTipo> tipos;
 	static PilhaDeEscopos                   escopos;
 	static ArrayList<ErroSemantico>         erros;
 
@@ -19,24 +19,24 @@ public class AnalisadorSemantico
 	{
 		// Popula o escopo com os tipos e funções nativas da linguagem
 		tipos = new HashMap<>();
-		tipos.put("float",  ast.Tipo.Float);
-		tipos.put("int",    ast.Tipo.Inteiro);
-		tipos.put("string", ast.Tipo.String);
-		tipos.put("bool",   ast.Tipo.Bool);
-		tipos.put("char",   ast.Tipo.Char);
-		tipos.put("short",  ast.Tipo.Short);
-		tipos.put("long",   ast.Tipo.Long);
+		tipos.put("float",  ast.SimboloTipo.Float);
+		tipos.put("int",    ast.SimboloTipo.Inteiro);
+		tipos.put("string", ast.SimboloTipo.String);
+		tipos.put("bool",   ast.SimboloTipo.Bool);
+		tipos.put("char",   ast.SimboloTipo.Char);
+		tipos.put("short",  ast.SimboloTipo.Short);
+		tipos.put("long",   ast.SimboloTipo.Long);
 
-		tipos.put("FLOAT",  ast.Tipo.Float);
-		tipos.put("INT",    ast.Tipo.Inteiro);
-		tipos.put("STRING", ast.Tipo.String);
-		tipos.put("BOOL", 	ast.Tipo.Bool);
-		tipos.put("CHAR", 	ast.Tipo.Char);
-		tipos.put("SHORT", 	ast.Tipo.Short);
-		tipos.put("LONG",   ast.Tipo.Long);
+		tipos.put("FLOAT",  ast.SimboloTipo.Float);
+		tipos.put("INT",    ast.SimboloTipo.Inteiro);
+		tipos.put("STRING", ast.SimboloTipo.String);
+		tipos.put("BOOL", 	ast.SimboloTipo.Bool);
+		tipos.put("CHAR", 	ast.SimboloTipo.Char);
+		tipos.put("SHORT", 	ast.SimboloTipo.Short);
+		tipos.put("LONG",   ast.SimboloTipo.Long);
 		
 		funcoes = new HashMap<>();
-		funcoes.put("tam", new ast.SimboloFunc("tam", ast.Tipo.Inteiro, new ast.Tipo[] { ast.Tipo.String }));
+		funcoes.put("tam", new ast.SimboloFunc("tam", ast.SimboloTipo.Inteiro, new ast.SimboloTipo[] { ast.SimboloTipo.String }));
 
 		escopos = new PilhaDeEscopos();
 		escopos.abrirEscopo();
@@ -98,7 +98,7 @@ public class AnalisadorSemantico
 		}
 
 		// Garante que o tipo da variável exista
-		ast.Tipo declTipo = tipos.get(decl.tipo.nome);
+		ast.SimboloTipo declTipo = tipos.get(decl.tipo.nome);
 		if (declTipo == null)
 		{
 			var msg = String.format("uso de identificador não declarado '%s'.", decl.tipo.nome);
@@ -118,7 +118,7 @@ public class AnalisadorSemantico
 			// que o tipo da declaração exista e a expressão inicial esteja resolvida.
 			//
 			// Se algum deles falhou, podemos retornar agora.
-			if (declTipo == null || decl.exprInicial.tipo == ast.Tipo.Indeterminado)
+			if (declTipo == null || decl.exprInicial.tipo == ast.SimboloTipo.Indeterminado)
 			{
 				return decl;
 			}
@@ -190,7 +190,7 @@ public class AnalisadorSemantico
 			atrib.simboloDestino = simbolo;
 			atrib.exprInicial = analisarExpr(atrib.exprInicial);
 			
-			if (atrib.exprInicial.tipo == ast.Tipo.Indeterminado)
+			if (atrib.exprInicial.tipo == ast.SimboloTipo.Indeterminado)
 			{
 				return atrib;
 			}
@@ -319,7 +319,7 @@ public class AnalisadorSemantico
 			atrib.simboloDestino = simbolo;
 			atrib.exprInicial = analisarExpr(atrib.exprInicial);
 
-			if (atrib.exprInicial.tipo != ast.Tipo.Indeterminado)
+			if (atrib.exprInicial.tipo != ast.SimboloTipo.Indeterminado)
 			{
 				// Quando o símbolo referenciado tem um tipo diferente da expressão atribuìda,
 				// o símbolo é redeclarado. No entanto, o símbolo deve ser dinâmico.
@@ -344,20 +344,20 @@ public class AnalisadorSemantico
 		expr.esq = analisarExpr(expr.esq);
 		expr.dir = analisarExpr(expr.dir);
 
-		if (expr.esq.tipo == ast.Tipo.Indeterminado || expr.dir.tipo == ast.Tipo.Indeterminado)
+		if (expr.esq.tipo == ast.SimboloTipo.Indeterminado || expr.dir.tipo == ast.SimboloTipo.Indeterminado)
 		{
 			return expr;
 		}
 
 		// impede operações ilegais entre strings
-		if (expr.dir.tipo == ast.Tipo.String && expr.esq.tipo == ast.Tipo.String)
+		if (expr.dir.tipo == ast.SimboloTipo.String && expr.esq.tipo == ast.SimboloTipo.String)
 		{
 			if (expr.op != ast.Operador.Mais)
 			{
 				var msg = String.format("operador '%s' não é permitido entre strings.", expr.op.toString());
 				erro(expr, msg);
 			}
-			expr.tipo = ast.Tipo.String;
+			expr.tipo = ast.SimboloTipo.String;
 			return expr;
 		}
 
@@ -375,19 +375,18 @@ public class AnalisadorSemantico
 		// garante que operações lógicas sejam realizadas entre inteiros
 		if (expr.op == ast.Operador.E || expr.op == ast.Operador.Ou)
 		{
-			if (expr.esq.tipo == ast.Tipo.Float || expr.esq.tipo == ast.Tipo.Double)
+			if (expr.esq.tipo == ast.SimboloTipo.Float || expr.esq.tipo == ast.SimboloTipo.Double)
 			{
-				expr.esq = new ast.ExprConversao(expr.esq, ast.Tipo.Inteiro);
+				expr.esq = new ast.ExprConversao(expr.esq, ast.SimboloTipo.Inteiro);
 			}
-			if (expr.dir.tipo == ast.Tipo.Float || expr.dir.tipo == ast.Tipo.Double)
+			if (expr.dir.tipo == ast.SimboloTipo.Float || expr.dir.tipo == ast.SimboloTipo.Double)
 			{
-				expr.dir = new ast.ExprConversao(expr.dir, ast.Tipo.Inteiro);
+				expr.dir = new ast.ExprConversao(expr.dir, ast.SimboloTipo.Inteiro);
 			}
 
-			expr.tipo = ast.Tipo.Inteiro;
+			expr.tipo = ast.SimboloTipo.Inteiro;
 			return expr;
 		}
-
 
 		if (expr.esq.tipo.prioridade > expr.dir.tipo.prioridade) 
 		{
@@ -415,7 +414,7 @@ public class AnalisadorSemantico
 		expr.exprEntao = analisarExpr(expr.exprEntao);
 		expr.exprSenao = analisarExpr(expr.exprSenao);
 
-		if (expr.exprEntao.tipo != ast.Tipo.Indeterminado && expr.exprSenao.tipo != ast.Tipo.Indeterminado)
+		if (expr.exprEntao.tipo != ast.SimboloTipo.Indeterminado && expr.exprSenao.tipo != ast.SimboloTipo.Indeterminado)
 		{
 			if (expr.exprEntao.tipo != expr.exprSenao.tipo)
 			{
@@ -462,7 +461,7 @@ public class AnalisadorSemantico
 		{
 			ast.Expr exprArgumento = analisarExpr(exprFunc.argumentos.get(i));
 			exprFunc.argumentos.set(i, exprArgumento);
-			ast.Tipo tipoDoParametro = funcao.parametros[i];
+			ast.SimboloTipo tipoDoParametro = funcao.parametros[i];
 			
 			if (tipoDoParametro != exprArgumento.tipo)
 			{

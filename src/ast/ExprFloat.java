@@ -7,7 +7,7 @@ public class ExprFloat extends Expr
 
 	public ExprFloat(parser.Token tok)
 	{
-		super(tok.beginLine, tok.endColumn, Tipo.Float);
+		super(tok.beginLine, tok.endColumn, SimboloTipo.Float);
 		this.valor = Double.parseDouble(tok.image);
 	}
 

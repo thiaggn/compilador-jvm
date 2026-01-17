@@ -6,7 +6,7 @@ public class ExprChar extends Expr
 
 	public ExprChar(parser.Token tok)
 	{
-		super(tok.beginLine, tok.endColumn, Tipo.Char);
+		super(tok.beginLine, tok.endColumn, SimboloTipo.Char);
 		this.valor = tok.image.substring(1, tok.image.length() - 1).charAt(0);
 	}
 

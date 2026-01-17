@@ -7,7 +7,7 @@ public class ExprUnaria extends Expr
 	
 	public ExprUnaria(Expr expr, Operador op, parser.Token tokOp)
 	{
-		super(tokOp.beginLine, tokOp.beginColumn, Tipo.Indeterminado);
+		super(tokOp.beginLine, tokOp.beginColumn, SimboloTipo.Indeterminado);
 		this.expr = expr;
 		this.op   = op;
 	}

@@ -6,7 +6,7 @@ public final class ExprBool extends Expr
 
 	public ExprBool(boolean valor, parser.Token token)
 	{
-		super(token.beginLine, token.endColumn, Tipo.Bool);
+		super(token.beginLine, token.endColumn, SimboloTipo.Bool);
 		this.valor = valor;
 	}
 

@@ -4,11 +4,11 @@ public class SimboloFunc
 {
 	public final String nome;
 	public final int    id;
-	public final Tipo   tipoRetorno;
-	public final Tipo[] parametros;
+	public final SimboloTipo   tipoRetorno;
+	public final SimboloTipo[] parametros;
 
 	static int proximoId = 0;
-	public SimboloFunc(String nome, Tipo tipoRetorno, Tipo[] tipoParametros)
+	public SimboloFunc(String nome, SimboloTipo tipoRetorno, SimboloTipo[] tipoParametros)
 	{
 		this.id          = proximoId++;
 		this.nome        = nome;

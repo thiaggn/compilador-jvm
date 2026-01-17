@@ -9,7 +9,7 @@ public class ExprInteiro extends Expr
 
 	public ExprInteiro(Token tok)
 	{
-		super(tok.beginLine, tok.beginColumn, Tipo.Inteiro);
+		super(tok.beginLine, tok.beginColumn, SimboloTipo.Inteiro);
 		this.token = tok;
 		this.valor = Integer.parseInt(tok.image);
 	}

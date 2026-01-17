@@ -4,7 +4,7 @@ public class ExprConversao extends Expr
 {
 	public Expr alvo;
 	
-	public ExprConversao(Expr alvo, Tipo tipo)
+	public ExprConversao(Expr alvo, SimboloTipo tipo)
 	{
 		super(alvo.linha, alvo.coluna, tipo);
 		this.alvo = alvo;

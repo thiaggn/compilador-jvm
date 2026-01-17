@@ -7,7 +7,7 @@ public class ExprId extends Expr
 
 	public ExprId(parser.Token token)
 	{
-		super(token.beginLine, token.beginColumn, Tipo.Indeterminado);
+		super(token.beginLine, token.beginColumn, SimboloTipo.Indeterminado);
 		this.nome = token.image;
 	}
 

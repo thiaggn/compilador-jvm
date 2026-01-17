@@ -8,7 +8,7 @@ public class ExprTernaria extends Expr
 
 	public ExprTernaria(Expr exprCondicao, Expr exprEntao, Expr exprSenao)
 	{
-		super(exprCondicao.linha, exprCondicao.coluna, Tipo.Indeterminado);
+		super(exprCondicao.linha, exprCondicao.coluna, SimboloTipo.Indeterminado);
 		this.exprCond  = exprCondicao;
 		this.exprEntao = exprEntao;
 		this.exprSenao = exprSenao;

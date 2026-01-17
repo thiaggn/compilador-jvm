@@ -2,8 +2,6 @@ package analisador;
 
 import java.util.ArrayList;
 
-
-/// Contém os erros capturados durante a análise semântica de uma árvore sintática abstrata
 public class Analise
 {
 	ArrayList<ErroSemantico> erros;

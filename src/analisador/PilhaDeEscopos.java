@@ -2,8 +2,6 @@ package analisador;
 
 import java.util.Deque;
 
-import ast.Simbolo;
-
 public class PilhaDeEscopos
 {
 	Deque<Escopo> escopos;
@@ -13,7 +11,7 @@ public class PilhaDeEscopos
 		escopos = new java.util.ArrayDeque<>();
 	}
 
-	public Simbolo resolver(String nome)
+	public ast.Simbolo resolver(String nome)
 	{
 		for (Escopo escopo : this.escopos)
 		{
@@ -25,7 +23,7 @@ public class PilhaDeEscopos
 		return null;
 	}
 
-	public void redeclarar(String nome, Simbolo simbolo)
+	public void redeclarar(String nome, ast.Simbolo simbolo)
 	{
 		for (Escopo escopo : this.escopos)
 		{
@@ -51,7 +49,7 @@ public class PilhaDeEscopos
 		escopos.pop();
 	}
 
-	public void declarar(Simbolo simbolo)
+	public void declarar(ast.Simbolo simbolo)
 	{
 		this.atual().declarar(simbolo);
 	}

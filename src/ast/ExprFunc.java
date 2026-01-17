@@ -9,7 +9,7 @@ public class ExprFunc extends Expr
 
 	public ExprFunc(Id nome, ArrayList<Expr> args)
 	{
-		super(nome.linha, nome.coluna, Tipo.Indeterminado);
+		super(nome.linha, nome.coluna, SimboloTipo.Indeterminado);
 		this.identificador = nome;
 		this.argumentos    = args;
 	}

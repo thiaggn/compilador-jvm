@@ -141,7 +141,6 @@ CmdIf CMD_IF(): { Expr cond; Bloco blocoEntao, blocoSenao = null; CmdIf cmdSenao
     { return new CmdIf(cond, blocoEntao, blocoSenao, tokIf); }
 }
 
-
 Expr EXPR(): {Expr expr;} 
 {
 	expr = EXPR_ATRIBUICAO()
