@@ -17,7 +17,10 @@ public class AnalisadorSemantico
 
 	public static Analise analisar(ast.Programa programa) 
 	{
-		// Popula o escopo com os tipos e funções nativas da linguagem
+		escopos = new PilhaDeEscopos();
+		escopos.abrirEscopo();
+
+		// tipos e funções nativas da linguagem
 		tipos = new HashMap<>();
 		tipos.put("float",  ast.SimboloTipo.Float);
 		tipos.put("int",    ast.SimboloTipo.Inteiro);
@@ -36,10 +39,12 @@ public class AnalisadorSemantico
 		tipos.put("LONG",   ast.SimboloTipo.Long);
 		
 		funcoes = new HashMap<>();
-		funcoes.put("tam", new ast.SimboloFunc("tam", ast.SimboloTipo.Inteiro, new ast.SimboloTipo[] { ast.SimboloTipo.String }));
+		funcoes.put("tam", new ast.SimboloFunc(
+			"tam", 
+			ast.SimboloTipo.Inteiro, 
+			new ast.SimboloTipo[] { ast.SimboloTipo.String }
+		));
 
-		escopos = new PilhaDeEscopos();
-		escopos.abrirEscopo();
 
 		erros = new ArrayList<>();
 
@@ -67,7 +72,7 @@ public class AnalisadorSemantico
 			case ast.CmdIf           cmd  -> analisarCmdIf(cmd);
 			case ast.ExprAtribuicao  expr -> analisarAtribuicao(expr);
 			case ast.ExprUnaria      expr -> analisarIncremento(expr);
-			case ast.ExprFunc        expr -> analisarExprFunc(expr);
+			case ast.ExprFunc        expr -> analisarFunc(expr);
 			default -> no;
 		};
 	}
@@ -112,7 +117,7 @@ public class AnalisadorSemantico
 		if (decl.exprInicial != null)
 		{
 			// Analisa expressão inicial
-			decl.exprInicial = analisarExpr(decl.exprInicial);
+			analisarExpr(decl.exprInicial);
 
 			// O próximo passo é a conversão de tipos. Para isso, é necessário
 			// que o tipo da declaração exista e a expressão inicial esteja resolvida.
@@ -172,7 +177,7 @@ public class AnalisadorSemantico
 		//
 		if (simbolo == null)
 		{
-			atrib.exprInicial = analisarExpr(atrib.exprInicial);
+			analisarExpr(atrib.exprInicial);
 	
 			ast.Simbolo novoSimbolo = new ast.Simbolo(atrib.destino.nome, atrib.exprInicial.tipo, true);
 			escopos.declarar(novoSimbolo);
@@ -188,7 +193,7 @@ public class AnalisadorSemantico
 		else
 		{
 			atrib.simboloDestino = simbolo;
-			atrib.exprInicial = analisarExpr(atrib.exprInicial);
+			analisarExpr(atrib.exprInicial);
 			
 			if (atrib.exprInicial.tipo == ast.SimboloTipo.Indeterminado)
 			{
@@ -269,19 +274,19 @@ public class AnalisadorSemantico
 		}
 	}
 
-	static ast.Expr analisarExpr(ast.Expr expr)
+	static void analisarExpr(ast.Expr expr)
 	{
-		return switch (expr) {
+		switch (expr) {
 			case ast.ExprBinaria    exprBin   -> analisarExprBinaria(exprBin);
 			case ast.ExprUnaria     exprUn    -> analisarExprUnaria(exprUn);
 			case ast.ExprTernaria   exprTern  -> analisarExprTernaria(exprTern);
 			case ast.ExprAtribuicao exprAtrib -> analisarExprAtribuicao(exprAtrib);
 			case ast.ExprId         id        -> analisarExprId(id);
-			case ast.ExprBool       literal   -> literal;
-			case ast.ExprFloat      literal   -> literal;
-			case ast.ExprInteiro    literal   -> literal;
-			case ast.ExprString     literal   -> literal;
-			case ast.ExprChar       literal   -> literal;
+			case ast.ExprBool       _         -> {}
+			case ast.ExprFloat      _         -> {}
+			case ast.ExprInteiro    _         -> {}
+			case ast.ExprString     _         -> {}
+			case ast.ExprChar       _         -> {}
 
 			default -> {
 				throw new Error(String.format(
@@ -291,7 +296,7 @@ public class AnalisadorSemantico
 		};
 	}
 
-	static ast.Expr analisarExprAtribuicao(ast.ExprAtribuicao atrib)
+	static void analisarExprAtribuicao(ast.ExprAtribuicao atrib)
 	{
 		// Contexto: atribuições, além de atualizarem o valor da variável à qual se
 		// referem, também retornam o valor que elas atribuem.
@@ -312,12 +317,11 @@ public class AnalisadorSemantico
 		if (simbolo == null)
 		{
 			erro(atrib, String.format("uso de identificador não declarado '%s'.", atrib.destino.nome));
-			return atrib;
 		}
 		else
 		{
 			atrib.simboloDestino = simbolo;
-			atrib.exprInicial = analisarExpr(atrib.exprInicial);
+			analisarExpr(atrib.exprInicial);
 
 			if (atrib.exprInicial.tipo != ast.SimboloTipo.Indeterminado)
 			{
@@ -336,17 +340,16 @@ public class AnalisadorSemantico
 				}
 			}
 		}
-		return atrib;
 	}
 
-	static ast.Expr analisarExprBinaria(ast.ExprBinaria expr)
+	static void analisarExprBinaria(ast.ExprBinaria expr)
 	{
-		expr.esq = analisarExpr(expr.esq);
-		expr.dir = analisarExpr(expr.dir);
+		analisarExpr(expr.esq);
+		analisarExpr(expr.dir);
 
 		if (expr.esq.tipo == ast.SimboloTipo.Indeterminado || expr.dir.tipo == ast.SimboloTipo.Indeterminado)
 		{
-			return expr;
+			return;
 		}
 
 		// impede operações ilegais entre strings
@@ -358,7 +361,7 @@ public class AnalisadorSemantico
 				erro(expr, msg);
 			}
 			expr.tipo = ast.SimboloTipo.String;
-			return expr;
+			return;
 		}
 
 		// garante que aritmética seja realizada com primitivos
@@ -369,7 +372,7 @@ public class AnalisadorSemantico
 				expr.op.toString(), expr.esq.tipo.nome, expr.dir.tipo.nome
 			);
 			erro(expr, msg);
-			return expr;
+			return;
 		}
 
 		// garante que operações lógicas sejam realizadas entre inteiros
@@ -385,7 +388,7 @@ public class AnalisadorSemantico
 			}
 
 			expr.tipo = ast.SimboloTipo.Inteiro;
-			return expr;
+			return;
 		}
 
 		if (expr.esq.tipo.prioridade > expr.dir.tipo.prioridade) 
@@ -398,21 +401,19 @@ public class AnalisadorSemantico
 		}
 
 		expr.tipo = expr.esq.tipo;
-		return expr;
 	}
 
-	static ast.Expr analisarExprUnaria(ast.ExprUnaria exprUn)
+	static void analisarExprUnaria(ast.ExprUnaria exprUn)
 	{
-		exprUn.expr = analisarExpr(exprUn.expr);
+		analisarExpr(exprUn.expr);
 		exprUn.tipo = exprUn.expr.tipo;
-		return exprUn;
 	}
 
-	static ast.Expr analisarExprTernaria(ast.ExprTernaria expr)
+	static void analisarExprTernaria(ast.ExprTernaria expr)
 	{
-		expr.exprCond  = analisarExpr(expr.exprCond);
-		expr.exprEntao = analisarExpr(expr.exprEntao);
-		expr.exprSenao = analisarExpr(expr.exprSenao);
+		analisarExpr(expr.exprCond);
+		analisarExpr(expr.exprEntao);
+		analisarExpr(expr.exprSenao);
 
 		if (expr.exprEntao.tipo != ast.SimboloTipo.Indeterminado && expr.exprSenao.tipo != ast.SimboloTipo.Indeterminado)
 		{
@@ -425,18 +426,16 @@ public class AnalisadorSemantico
 				expr.tipo = expr.exprEntao.tipo;
 			}
 		}
-		
-		return expr;
 	}
 
-	static ast.Expr analisarExprFunc(ast.ExprFunc exprFunc)
+	static void analisarExprFunc(ast.ExprFunc exprFunc)
 	{
 		// trata o uso de uma função não declarada
 		ast.SimboloFunc funcao = funcoes.get(exprFunc.identificador.nome);
 		if (funcao == null)
 		{
 			erro(exprFunc, String.format("chamada de função não declarada '%s'", exprFunc.identificador.nome));
-			return exprFunc;
+			return;
 		}
 
 		// trata quando argumentos estão faltando
@@ -459,10 +458,11 @@ public class AnalisadorSemantico
 		// sendo passado.
 		for (int i = 0; i < funcao.parametros.length; i++)
 		{
-			ast.Expr exprArgumento = analisarExpr(exprFunc.argumentos.get(i));
-			exprFunc.argumentos.set(i, exprArgumento);
+			ast.Expr exprArgumento = exprFunc.argumentos.get(i); 
 			ast.SimboloTipo tipoDoParametro = funcao.parametros[i];
 			
+			analisarExpr(exprArgumento);
+
 			if (tipoDoParametro != exprArgumento.tipo)
 			{
 				if (tipoDoParametro.ehPrimitivo && exprArgumento.tipo.ehPrimitivo)
@@ -482,11 +482,9 @@ public class AnalisadorSemantico
 				}
 			}
 		}
-
-		return exprFunc;
 	}
 
-	static ast.Expr analisarExprId(ast.ExprId id)
+	static void analisarExprId(ast.ExprId id)
 	{
 		ast.Simbolo simbolo = escopos.resolver(id.nome);
 		if (simbolo != null)
@@ -498,12 +496,11 @@ public class AnalisadorSemantico
 		{
 			erro(id, String.format("símbolo desconhecido '%s'.", id.nome));
 		}
-		return id;
 	}
 
 	static ast.CmdWhile analisarCmdWhile(ast.CmdWhile cmd)
 	{
-		cmd.exprCondicao = analisarExpr(cmd.exprCondicao);
+		analisarExpr(cmd.exprCondicao);
 
 		escopos.abrirEscopo(); // início do escopo do laço while
 		{
@@ -524,8 +521,8 @@ public class AnalisadorSemantico
 
 	static ast.CmdIf analisarCmdIf(ast.CmdIf cmd)
 	{
-		ast.Expr exprCond = analisarExpr(cmd.exprCondicao);
-		if (!exprCond.tipo.ehPrimitivo)
+		 analisarExpr(cmd.exprCondicao);
+		if (!cmd.exprCondicao.tipo.ehPrimitivo)
 		{
 			erro(cmd.exprCondicao, "a expressão de condição de um if deve resultar num primitivo.");
 		}
@@ -564,14 +561,14 @@ public class AnalisadorSemantico
 	/// 
 	static ast.CmdFor analisarCmdFor(ast.CmdFor cmd)
 	{
-		cmd.exprInicial = analisarExpr(cmd.exprInicial);
+		analisarExpr(cmd.exprInicial);
 
 		escopos.abrirEscopo(); // início do escopo do laço for
 		{
 			escopos.declarar(new ast.Simbolo(cmd.varInicial.nome, cmd.exprInicial.tipo, false));
 			
-			cmd.exprTeste = analisarExpr(cmd.exprTeste);
-			cmd.exprIterativa = analisarExpr(cmd.exprIterativa);
+			analisarExpr(cmd.exprTeste);
+			analisarExpr(cmd.exprIterativa);
 	
 			if (!cmd.exprTeste.tipo.ehPrimitivo)
 			{
@@ -588,6 +585,13 @@ public class AnalisadorSemantico
 		return cmd;
 	}
 
+	static ast.No analisarFunc(ast.ExprFunc func)
+	{
+		analisarExprFunc(func);
+		return func;
+	}
+
+
 	static ast.CmdExibe analisarCmdExibe(ast.CmdExibe cmd)
 	{
 		analisarExpr(cmd.valor);
@@ -602,7 +606,6 @@ public class AnalisadorSemantico
 			{
 				bloco.nos.set(i, analisarNo(bloco.nos.get(i)));
 			}
-
 		}
 		escopos.fecharEscopo(); // fim do escopo do bloco
 	}
