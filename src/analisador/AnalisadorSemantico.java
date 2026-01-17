@@ -45,7 +45,6 @@ public class AnalisadorSemantico
 			new ast.SimboloTipo[] { ast.SimboloTipo.String }
 		));
 
-
 		erros = new ArrayList<>();
 
 		// Analisa cada nó da árvore
@@ -200,8 +199,8 @@ public class AnalisadorSemantico
 				return atrib;
 			}
 			
-			// Caso 2) Se a atribuição se refere a uma variável existente e elas têm tipos iguais 
-			// ou primitivos, ela atualiza o valor dessa variável.
+			// Caso 2) Se a atribuição se refere a uma variável existente e elas têm tipos
+			// iguais ou primitivos, ela atualiza o valor dessa variável.
 			//
 			// int a := 10;  <-- declara a como 10
 			// a := 5;   <-- atualiza a para 5
@@ -224,8 +223,9 @@ public class AnalisadorSemantico
 				return atrib;
 			}
 
-			// Caso 3) Se existir uma variável no mesmo escopo e o valor atribuído tiver tipo diferente,
-			// a atribuição cria uma nova variável com o novo tipo (redeclaração), “sombreando” a anterior.
+			// Caso 3) Se existir uma variável no mesmo escopo e o valor atribuído
+			// tiver tipo diferente, a atribuição cria uma nova variável com o novo tipo
+			// (redeclaração), “sombreando” a anterior.
 			//
 			// x := "thiago";  <-- x é string
 			// x := 10;        <-- x agora é int
@@ -252,8 +252,8 @@ public class AnalisadorSemantico
 				return decl;
 			}
 			
-			// Caso 4) Se a variável e a atribuição estiverem em escopos diferentes e os tipos forem diferentes,
-			// a atribuição cria uma nova variável nesse escopo.
+			// Caso 4) Se a variável e a atribuição estiverem em escopos diferentes e os
+			// tipos forem diferentes, a atribuição cria uma nova variável nesse escopo.
 			//
 			// y := "joão";
 			// if (1 == 1) {
@@ -274,6 +274,9 @@ public class AnalisadorSemantico
 		}
 	}
 
+	/// Resolve o tipo de uma expressão. Quando essa função retornar, o atributo 
+	/// `expr.tipo` estará marcado com o tipo certo. As funções que essa função 
+	/// chama também fazem isso.
 	static void analisarExpr(ast.Expr expr)
 	{
 		switch (expr) {
@@ -282,10 +285,14 @@ public class AnalisadorSemantico
 			case ast.ExprTernaria   exprTern  -> analisarExprTernaria(exprTern);
 			case ast.ExprAtribuicao exprAtrib -> analisarExprAtribuicao(exprAtrib);
 			case ast.ExprId         id        -> analisarExprId(id);
+
+			// literais já têm o campo `tipo` marcado, então não precisa analisar. Mas
+			// temos que crir um case nesse switch pra não cair no default e não lançar
+			// um erro.
 			case ast.ExprBool       _         -> {}
-			case ast.ExprFloat      _         -> {}
+			case ast.ExprFloat      _         -> {} 
 			case ast.ExprInteiro    _         -> {}
-			case ast.ExprString     _         -> {}
+			case ast.ExprString     _         -> {} 
 			case ast.ExprChar       _         -> {}
 
 			default -> {
