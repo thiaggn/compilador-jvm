@@ -322,7 +322,7 @@ public class AnalisadorSemantico
 			if (atrib.exprInicial.tipo != ast.SimboloTipo.Indeterminado)
 			{
 				// Quando o símbolo referenciado tem um tipo diferente da expressão atribuìda,
-				// o símbolo é redeclarado. No entanto, o símbolo deve ser dinâmico.
+				// o símbolo é redeclarado. No entanto, o símbolo deve permitir redeclaração.
 				if (!(atrib.exprInicial.tipo.ehPrimitivo && simbolo.tipo.ehPrimitivo) && simbolo.ehRedeclaravel)
 				{
 					ast.Simbolo novoSimbolo = new ast.Simbolo(simbolo.nome, atrib.exprInicial.tipo, true);

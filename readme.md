@@ -16,47 +16,42 @@ Set-ExecutionPolicy Bypass -Scope Process
 
 São formas válidas de declarar variáveis:
 ```javascript
-// Variável estática com tipo explícito
+// Variável não-redeclarável
 float a := 10.0;
 
-// Variável dinâmica com tipo inferido
+// Variável redeclarável (o tipo é inferido)
 x := "nome";
 
 int tamanho = tam(x);
 exibe x + a; // 14.0
 ```
 
-Variáveis dinâmicas permitem ser redeclaradas com outro tipo desde que estejam no mesmo escopo. Se estiverem em escopos diferentes, ocorre uma declaração local.
+Variáveis redeclaráveis podem ser declaradas novamente com outro tipo, desde que a redeclaração ocorra no mesmo escopo.
+
 ```javascript
-c := 3;
-float d := 3.0;
-
-x := "ufes";
-exibe x; // "ufes"
-
-x := 1;
-exibe x + 1; // 2
-
-if (x > 1) then {
-	// Declaração local porque x é um inteiro em outro escopo
-	x := "ceunes";
-	exibe x; // "ceunes"
-
-	// Essas atribuições alteram 'c' e 'd' no escopo externo
-	// porque correspondem em tipo.
-	c := 15;
-	d := 15; // 'd' é float e 15 é inteiro, mas ocorre uma conversão implícita.
-
-	x := x + " espirito santo";
-	exibe x; // "ceunes espirito santo"
-}
-
-exibe c; // 15
-exibe d; // 15.0
-exibe x; // 1
+x := 10;
+x := "dez";
+exibe x;  // "dez"
 ```
+Caso a declaração aconteça em um escopo diferente, trata-se de uma nova declaração local.
+```javascript
+x := 10;
+if (x < 10) then {
+	x := "dez";
+	exibe x; // "dez"
+}
+exibe x; // 10
+```
+Variáveis primitivas não são tratadas como tipos distintos entre si; nesses casos, ocorre uma conversão implícita. Na prática, apenas `strings` e os tipos primitivos são considerados tipos diferentes.
 
-Variávei estáticas não permitem ser redeclaradas.
+```javascript
+y := 10;
+if (y < 5) then {
+	y := 5.0; // 5.0 é rebaixado para inteiro
+}
+exibe y; // 5
+```
+Variáveis explicitamente declaradas com seu tipo não podem ser redeclaradas.
 ```javascript
 int idade := 22;
 idade := "50"; // erro semântico: 'idade' não permite redeclaração com outro tipo.

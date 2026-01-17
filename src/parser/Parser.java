@@ -723,16 +723,16 @@ args.add(arg);
     finally { jj_save(3, xla); }
   }
 
+  private boolean jj_3_2()
+ {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
   private boolean jj_3_3()
  {
     if (jj_3R_10()) return true;
     if (jj_scan_token(ATRIB)) return true;
-    return false;
-  }
-
-  private boolean jj_3_2()
- {
-    if (jj_3R_9()) return true;
     return false;
   }
 
