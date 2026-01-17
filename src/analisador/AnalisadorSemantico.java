@@ -289,11 +289,11 @@ public class AnalisadorSemantico
 			// literais já têm o campo `tipo` marcado, então não precisa analisar. Mas
 			// temos que crir um case nesse switch pra não cair no default e não lançar
 			// um erro.
-			case ast.ExprBool       _         -> {}
-			case ast.ExprFloat      _         -> {} 
-			case ast.ExprInteiro    _         -> {}
-			case ast.ExprString     _         -> {} 
-			case ast.ExprChar       _         -> {}
+			case ast.ExprBool    _ -> {}
+			case ast.ExprFloat   _ -> {} 
+			case ast.ExprInteiro _ -> {}
+			case ast.ExprString  _ -> {} 
+			case ast.ExprChar    _ -> {}
 
 			default -> {
 				throw new Error(String.format(
