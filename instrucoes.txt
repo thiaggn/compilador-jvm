@@ -1,0 +1,30 @@
+# Carregar valores constantes na pilha de operandos (JVM)
+
+instrução      valor empilhado            tamanho valor   slots   origem da constante
+------------  --------------------------  -------------   -----   --------------------
+aconst_null   referência null             -               1       opcode
+
+iconst_m1     -1 int                      4 bytes         1       opcode
+iconst_0      0 int                       4 bytes         1       opcode
+iconst_1      1 int                       4 bytes         1       opcode
+iconst_2      2 int                       4 bytes         1       opcode
+iconst_3      3 int                       4 bytes         1       opcode
+iconst_4      4 int                       4 bytes         1       opcode
+iconst_5      5 int                       4 bytes         1       opcode
+
+lconst_0      0 long                      8 bytes         2       opcode
+lconst_1      1 long                      8 bytes         2       opcode
+
+fconst_0      0.0 float                   4 bytes         1       opcode
+fconst_1      1.0 float                   4 bytes         1       opcode
+fconst_2      2.0 float                   4 bytes         1       opcode
+
+dconst_0      0.0 double                  8 bytes         2       opcode
+dconst_1      1.0 double                  8 bytes         2       opcode
+
+bipush        -128 a 127 (int)            4 bytes         1       operando, 1 bytes
+sipush        -32768 a 32767 (int)        4 bytes         1       operando, 2 bytes
+
+ldc           int, float, String, Class   4 bytes         1       memória, 4 bytes
+ldc_w         int, float, String, Class   4 bytes         1       memória, 4 bytes
+ldc2_w        long, double                8 bytes         2       memória, 4 bytes

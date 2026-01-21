@@ -6,16 +6,19 @@ public enum Operador {
 	Mul("*"),
 	Div("/"),
 	Maior(">"),
+	Resto("%"),
+
+	Nao("!"),
+	IncPos("++"),
+	DecPos("--"),
+
 	MaiorIg(">="),
 	Menor("<"),
 	MenorIg("<="),
 	Igual("=="),
 	Dif("!="),
-	Nao("!"),
-	E("&&"),
-	Ou("||"),
-	IncPos("++"),
-	DecPos("--");
+	EE("&&"),
+	OuOu("||");
 
 	private final String simbolo;
 

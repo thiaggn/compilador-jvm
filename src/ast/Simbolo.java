@@ -2,11 +2,11 @@ package ast;
 
 public class Simbolo implements Debug
 {
-	public String  nome;
-	public int     ref;
-	public SimboloTipo    tipo;
-	public boolean ehRedeclaravel;
-	public int     idEscopo;
+	public String      nome;
+	public int         ref;
+	public SimboloTipo tipo;
+	public boolean     ehRedeclaravel;
+	public int         idEscopo;
 	
 	static int proximaRef = 0;
 

@@ -13,7 +13,8 @@ public class ExprConversao extends Expr
 	@Override
 	public void print()
 	{
-		Print.abreObjeto(String.format("Cast<%s, %s>", this.alvo.tipo.nome, this.tipo.nome));
+		Print.abreObjeto(String.format("ExprConversão", this.alvo.tipo.nome, this.tipo.nome));
+		Print.campoComValor("tipo", tipo.nome);
 		Print.campoComObjeto("expr_alvo", alvo);
 		Print.fechaObjeto();
 	}

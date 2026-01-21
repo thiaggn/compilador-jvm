@@ -1,6 +1,6 @@
 package ast;
 
-public class Print
+class Print
 {
 	static int nivel = 0;
 
@@ -44,7 +44,7 @@ public class Print
 	{
 		for (int i = 0; i < Print.nivel; i++)
 		{
-			Out.format("   ");
+			Out.format("     ");
 		}
 	}
 

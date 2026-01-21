@@ -1,14 +1,13 @@
 package ast;
 
-
 public class ExprFloat extends Expr 
 {
-	public double valor;
+	public float valor;
 
 	public ExprFloat(parser.Token tok)
 	{
 		super(tok.beginLine, tok.endColumn, SimboloTipo.Float);
-		this.valor = Double.parseDouble(tok.image);
+		this.valor = Float.parseFloat(tok.image);
 	}
 
 	@Override

@@ -3,8 +3,6 @@ package analisador;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import ast.Expr;
-
 public class AnalisadorSemantico
 {
 	static HashMap<String, ast.SimboloFunc>	funcoes;
@@ -66,11 +64,11 @@ public class AnalisadorSemantico
 	{
 		return switch (no) 
 		{
-			case ast.CmdDeclVariavel cmd  -> analisarDeclVariavel(cmd);
-			case ast.CmdExibe        cmd  -> analisarCmdExibe(cmd);
-			case ast.CmdWhile        cmd  -> analisarCmdWhile(cmd);
-			case ast.CmdFor          cmd  -> analisarCmdFor(cmd);
-			case ast.CmdIf           cmd  -> analisarCmdIf(cmd);
+			case ast.CmdDeclVariavel cmd  -> analisarDeclaracao(cmd);
+			case ast.CmdExibe        cmd  -> analisarExibe(cmd);
+			case ast.CmdWhile        cmd  -> analisarWhile(cmd);
+			case ast.CmdFor          cmd  -> analisarFor(cmd);
+			case ast.CmdIf           cmd  -> analisarIf(cmd);
 			case ast.ExprAtribuicao  expr -> analisarAtribuicao(expr);
 			case ast.ExprUnaria      expr -> analisarIncremento(expr);
 			case ast.ExprFunc        expr -> analisarFunc(expr);
@@ -93,7 +91,7 @@ public class AnalisadorSemantico
 		return expr;
 	}
 
-	static ast.No analisarDeclVariavel(ast.CmdDeclVariavel decl)
+	static ast.No analisarDeclaracao(ast.CmdDeclVariavel decl)
 	{
 		boolean declaracaoEhValida = true;
 		// Garante que uma variável não seja redeclarada.
@@ -197,6 +195,7 @@ public class AnalisadorSemantico
 		else
 		{
 			atrib.simboloDestino = simbolo;
+			atrib.tipo = simbolo.tipo;
 			analisarExpr(atrib.exprInicial);
 			
 			if (atrib.exprInicial.tipo == ast.SimboloTipo.Indeterminado)
@@ -388,7 +387,7 @@ public class AnalisadorSemantico
 		}
 
 		// garante que operações lógicas sejam realizadas entre inteiros
-		if (expr.op == ast.Operador.E || expr.op == ast.Operador.Ou)
+		if (expr.op == ast.Operador.EE || expr.op == ast.Operador.OuOu)
 		{
 			if (expr.esq.tipo == ast.SimboloTipo.Float || expr.esq.tipo == ast.SimboloTipo.Double)
 			{
@@ -510,7 +509,7 @@ public class AnalisadorSemantico
 		}
 	}
 
-	static ast.CmdWhile analisarCmdWhile(ast.CmdWhile cmd)
+	static ast.CmdWhile analisarWhile(ast.CmdWhile cmd)
 	{
 		analisarExpr(cmd.exprCondicao);
 
@@ -531,7 +530,7 @@ public class AnalisadorSemantico
 		return cmd;
 	}
 
-	static ast.CmdIf analisarCmdIf(ast.CmdIf cmd)
+	static ast.CmdIf analisarIf(ast.CmdIf cmd)
 	{
 		analisarExpr(cmd.exprCondicao);
 		if (!cmd.exprCondicao.tipo.ehPrimitivo)
@@ -571,7 +570,7 @@ public class AnalisadorSemantico
 	/// 
 	/// exibe i; <-- printa 10
 	/// 
-	static ast.CmdFor analisarCmdFor(ast.CmdFor cmd)
+	static ast.CmdFor analisarFor(ast.CmdFor cmd)
 	{
 		analisarExpr(cmd.decl.exprInicial);
 
@@ -605,7 +604,7 @@ public class AnalisadorSemantico
 	}
 
 
-	static ast.CmdExibe analisarCmdExibe(ast.CmdExibe cmd)
+	static ast.CmdExibe analisarExibe(ast.CmdExibe cmd)
 	{
 		analisarExpr(cmd.valor);
 		return cmd;

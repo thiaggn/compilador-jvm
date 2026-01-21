@@ -17,6 +17,7 @@ public class ExprAtribuicao extends Expr
 	public void print()
 	{
 		Print.abreObjeto("ExprAtribuição");
+		Print.campoComValor("tipo", tipo.nome);
 		Print.campoComValor("destino", 
 			String.format("%s (%d, %s)", this.simboloDestino.nome, this.simboloDestino.ref, this.simboloDestino.tipo.nome)
 		);

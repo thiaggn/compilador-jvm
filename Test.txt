@@ -1,11 +1,6 @@
 $BEGIN_PROGRAM
 
-i := 10;
-
-for (i := i; i < 10; i++) {
-	exibe i;
-}
-
-i + 1;
+float s := 10.0;
+float k := 256 + (s > 5 ? 15.0 :  s + 1) * 8;
 
 $END_PROGRAM

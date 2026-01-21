@@ -345,13 +345,13 @@ cond = new ExprTernaria(cond, esq, dir);
       case OR:{
         tokOp = jj_consume_token(OR);
         dir = EXPR_IGUAL();
-esq = new ExprBinaria(esq, dir, Operador.Ou, tokOp);
+esq = new ExprBinaria(esq, dir, Operador.OuOu, tokOp);
         break;
         }
       case AND:{
         tokOp = jj_consume_token(AND);
         dir = EXPR_IGUAL();
-esq = new ExprBinaria(esq, dir, Operador.E, tokOp);
+esq = new ExprBinaria(esq, dir, Operador.EE, tokOp);
         break;
         }
       default:
@@ -494,6 +494,7 @@ esq = new ExprBinaria(esq, dir, Operador.Menos, tokOp);
     label_7:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+      case PORCENTO:
       case BARRA:
       case ASTERISCO:{
         ;
@@ -514,6 +515,12 @@ esq = new ExprBinaria(esq, dir, Operador.Mul, tokOp);
         tokOp = jj_consume_token(BARRA);
         dir = EXPR_PREFIXO();
 esq = new ExprBinaria(esq, dir, Operador.Div, tokOp);
+        break;
+        }
+      case PORCENTO:{
+        tokOp = jj_consume_token(PORCENTO);
+        dir = EXPR_PREFIXO();
+esq = new ExprBinaria(esq, dir, Operador.Resto, tokOp);
         break;
         }
       default:
@@ -723,12 +730,6 @@ args.add(arg);
     finally { jj_save(3, xla); }
   }
 
-  private boolean jj_3_2()
- {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
   private boolean jj_3_3()
  {
     if (jj_3R_10()) return true;
@@ -768,6 +769,12 @@ args.add(arg);
     return false;
   }
 
+  private boolean jj_3_2()
+ {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
   /** Generated Token Manager. */
   public ParserTokenManager token_source;
   SimpleCharStream jj_input_stream;
@@ -787,10 +794,10 @@ args.add(arg);
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xe0c04900,0xe0c04900,0xe0c04900,0xe0c04900,0x1000000,0x40,0x0,0xc0c04100,0x200,0x18000000,0x18000000,0x3000,0x3000,0x78000,0x78000,0xc00000,0xc00000,0x180000,0x180000,0xc0c04100,0x6000000,0x6000000,0xc0000100,0x200000,};
+      jj_la1_0 = new int[] {0xc1804900,0xc1804900,0xc1804900,0xc1804900,0x2000000,0x40,0x0,0x81804100,0x200,0x30000000,0x30000000,0x3000,0x3000,0xe8000,0xe8000,0x1800000,0x1800000,0x310000,0x310000,0x81804100,0xc000000,0xc000000,0x80000100,0x400000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x1f15,0x1f15,0x1f15,0x1f15,0x0,0x10,0x20,0x1f00,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x1f00,0x0,0x0,0x1f00,0x0,};
+      jj_la1_1 = new int[] {0x3e2b,0x3e2b,0x3e2b,0x3e2b,0x0,0x20,0x40,0x3e01,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3e01,0x0,0x0,0x3e01,0x0,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[4];
   private boolean jj_rescan = false;
@@ -977,7 +984,7 @@ args.add(arg);
   /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[45];
+    boolean[] la1tokens = new boolean[46];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -994,7 +1001,7 @@ args.add(arg);
         }
       }
     }
-    for (int i = 0; i < 45; i++) {
+    for (int i = 0; i < 46; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;

@@ -10,7 +10,6 @@ import java.nio.file.Path;
 import analisador.AnalisadorSemantico;
 import parser.Parser;
 import analisador.Analise;
-import intermediario.GeradorIR;
 
 public class Main 
 {
@@ -39,8 +38,6 @@ public class Main
 				programa.print();
 			}
 
-			// gera o código intermediário
-			GeradorIR.gerarIntermediario(programa);
 		} 
 		catch (Throwable err) 
 		{

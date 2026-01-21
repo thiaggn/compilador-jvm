@@ -36,6 +36,7 @@ TOKEN: {
 	| <DIFERENTE:     "!=">
 	| <NEGACAO:       "!">			
 	| <MENOR:         "<">
+	| <PORCENTO:      "%">
 	| <MENOR_IGUAL:   "<=">
 	| <MAIOR:         ">">
 	| <MAIOR_IGUAL:   ">=">
@@ -167,8 +168,8 @@ Expr EXPR_LOGICO(): {Expr esq, dir; Token tokOp; }
 {
 	esq = EXPR_IGUAL() 
 	(
-		  tokOp = <OR>  dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.Ou, tokOp); }
-		| tokOp = <AND> dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.E, tokOp); } 
+		  tokOp = <OR>  dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.OuOu, tokOp); }
+		| tokOp = <AND> dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.EE, tokOp); } 
 	)*
 	{ return esq; }
 }
@@ -211,6 +212,7 @@ Expr EXPR_MULT(): {Expr esq, dir; Token tokOp; }
 	(
 		  tokOp = <ASTERISCO> dir = EXPR_PREFIXO() { esq = new ExprBinaria(esq, dir, Operador.Mul, tokOp); }
 		| tokOp = <BARRA>     dir = EXPR_PREFIXO() { esq = new ExprBinaria(esq, dir, Operador.Div, tokOp); }
+		| tokOp = <PORCENTO>  dir = EXPR_PREFIXO() { esq = new ExprBinaria(esq, dir, Operador.Resto, tokOp); }
 	)*
 	{ return esq; }
 }

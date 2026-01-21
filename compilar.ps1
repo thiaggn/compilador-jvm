@@ -5,6 +5,7 @@ javac -d "./out" `
 	"./src/ast/*.java" `
 	"./src/analisador/*.java" `
 	"./src/intermediario/*.java" `
+	"./src/ir/*.java" `
 	"./src/*.java" &&
 
 java -cp "./out" Main @args
