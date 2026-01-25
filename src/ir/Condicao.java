@@ -6,5 +6,18 @@ public enum Condicao {
 	Maior,
 	MaiorIg,
 	Menor,
-	MenorIq
+	MenorIg;
+
+	public Condicao negado()
+	{
+		return switch (this)
+		{
+			case Igual     -> Diferente;
+			case Diferente -> Igual;
+			case Maior     -> MenorIg;
+			case MaiorIg   -> Menor;
+			case Menor     -> MaiorIg;
+			case MenorIg   -> Maior;
+		};
+	}
 }

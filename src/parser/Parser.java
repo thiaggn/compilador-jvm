@@ -309,7 +309,7 @@ blocoSenao = new Bloco(cmdSenao);
   }
 
   final public Expr EXPR_TERNARIA() throws ParseException {Expr cond, esq, dir;
-    cond = EXPR_LOGICO();
+    cond = EXPR_OR();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case INTERROG:{
       jj_consume_token(INTERROG);
@@ -327,13 +327,12 @@ cond = new ExprTernaria(cond, esq, dir);
     throw new Error("Missing return statement in function");
   }
 
-  final public Expr EXPR_LOGICO() throws ParseException {Expr esq, dir; Token tokOp;
-    esq = EXPR_IGUAL();
+  final public Expr EXPR_OR() throws ParseException {Expr esq, dir; Token tokOp;
+    esq = EXPR_AND();
     label_3:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case OR:
-      case AND:{
+      case OR:{
         ;
         break;
         }
@@ -341,24 +340,30 @@ cond = new ExprTernaria(cond, esq, dir);
         jj_la1[9] = jj_gen;
         break label_3;
       }
-      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case OR:{
-        tokOp = jj_consume_token(OR);
-        dir = EXPR_IGUAL();
+      tokOp = jj_consume_token(OR);
+      dir = EXPR_AND();
 esq = new ExprBinaria(esq, dir, Operador.OuOu, tokOp);
-        break;
-        }
+    }
+{if ("" != null) return esq;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public Expr EXPR_AND() throws ParseException {Expr esq, dir; Token tokOp;
+    esq = EXPR_IGUAL();
+    label_4:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case AND:{
-        tokOp = jj_consume_token(AND);
-        dir = EXPR_IGUAL();
-esq = new ExprBinaria(esq, dir, Operador.EE, tokOp);
+        ;
         break;
         }
       default:
         jj_la1[10] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
+        break label_4;
       }
+      tokOp = jj_consume_token(AND);
+      dir = EXPR_IGUAL();
+esq = new ExprBinaria(esq, dir, Operador.EE, tokOp);
     }
 {if ("" != null) return esq;}
     throw new Error("Missing return statement in function");
@@ -366,18 +371,9 @@ esq = new ExprBinaria(esq, dir, Operador.EE, tokOp);
 
   final public Expr EXPR_IGUAL() throws ParseException {Expr esq, dir; Token tokOp;
     esq = EXPR_RELACIONAL();
-    label_4:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case IGUAL:
-      case DIFERENTE:{
-        ;
-        break;
-        }
-      default:
-        jj_la1[11] = jj_gen;
-        break label_4;
-      }
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case IGUAL:
+    case DIFERENTE:{
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case IGUAL:{
         tokOp = jj_consume_token(IGUAL);
@@ -392,10 +388,15 @@ esq = new ExprBinaria(esq, dir, Operador.Dif, tokOp);
         break;
         }
       default:
-        jj_la1[12] = jj_gen;
+        jj_la1[11] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
+      break;
+      }
+    default:
+      jj_la1[12] = jj_gen;
+      ;
     }
 {if ("" != null) return esq;}
     throw new Error("Missing return statement in function");
@@ -403,20 +404,11 @@ esq = new ExprBinaria(esq, dir, Operador.Dif, tokOp);
 
   final public Expr EXPR_RELACIONAL() throws ParseException {Expr esq, dir; Token tokOp;
     esq = EXPR_ADICAO();
-    label_5:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
-      case MENOR:
-      case MENOR_IGUAL:
-      case MAIOR:
-      case MAIOR_IGUAL:{
-        ;
-        break;
-        }
-      default:
-        jj_la1[13] = jj_gen;
-        break label_5;
-      }
+    switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
+    case MENOR:
+    case MENOR_IGUAL:
+    case MAIOR:
+    case MAIOR_IGUAL:{
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case MAIOR:{
         tokOp = jj_consume_token(MAIOR);
@@ -443,10 +435,15 @@ esq = new ExprBinaria(esq, dir, Operador.MenorIg, tokOp);
         break;
         }
       default:
-        jj_la1[14] = jj_gen;
+        jj_la1[13] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
+      break;
+      }
+    default:
+      jj_la1[14] = jj_gen;
+      ;
     }
 {if ("" != null) return esq;}
     throw new Error("Missing return statement in function");
@@ -454,7 +451,7 @@ esq = new ExprBinaria(esq, dir, Operador.MenorIg, tokOp);
 
   final public Expr EXPR_ADICAO() throws ParseException {Expr esq, dir; Token tokOp;
     esq = EXPR_MULT();
-    label_6:
+    label_5:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case MENOS:
@@ -464,7 +461,7 @@ esq = new ExprBinaria(esq, dir, Operador.MenorIg, tokOp);
         }
       default:
         jj_la1[15] = jj_gen;
-        break label_6;
+        break label_5;
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case MAIS:{
@@ -491,7 +488,7 @@ esq = new ExprBinaria(esq, dir, Operador.Menos, tokOp);
 
   final public Expr EXPR_MULT() throws ParseException {Expr esq, dir; Token tokOp;
     esq = EXPR_PREFIXO();
-    label_7:
+    label_6:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case PORCENTO:
@@ -502,7 +499,7 @@ esq = new ExprBinaria(esq, dir, Operador.Menos, tokOp);
         }
       default:
         jj_la1[17] = jj_gen;
-        break label_7;
+        break label_6;
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case ASTERISCO:{
@@ -575,7 +572,7 @@ esq = new ExprBinaria(esq, dir, Operador.Resto, tokOp);
 
   final public Expr EXPR_POSFIXO() throws ParseException {Expr expr; Token tokOp;
     expr = FATOR();
-    label_8:
+    label_7:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case INCREMENTO:
@@ -585,7 +582,7 @@ esq = new ExprBinaria(esq, dir, Operador.Resto, tokOp);
         }
       default:
         jj_la1[20] = jj_gen;
-        break label_8;
+        break label_7;
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case INCREMENTO:{
@@ -732,38 +729,38 @@ args.add(arg);
 
   private boolean jj_3_3()
  {
-    if (jj_3R_10()) return true;
+    if (jj_3R_9()) return true;
     if (jj_scan_token(ATRIB)) return true;
     return false;
   }
 
   private boolean jj_3_4()
  {
-    if (jj_3R_11()) return true;
+    if (jj_3R_10()) return true;
     return false;
   }
 
-  private boolean jj_3R_11()
+  private boolean jj_3R_10()
  {
-    if (jj_3R_10()) return true;
+    if (jj_3R_9()) return true;
     if (jj_scan_token(PAREN_ABRE)) return true;
     return false;
   }
 
   private boolean jj_3_1()
  {
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_8()
+ {
+    if (jj_3R_9()) return true;
     if (jj_3R_9()) return true;
     return false;
   }
 
   private boolean jj_3R_9()
- {
-    if (jj_3R_10()) return true;
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_10()
  {
     if (jj_scan_token(ID)) return true;
     return false;
@@ -771,7 +768,7 @@ args.add(arg);
 
   private boolean jj_3_2()
  {
-    if (jj_3R_9()) return true;
+    if (jj_3R_8()) return true;
     return false;
   }
 
@@ -794,7 +791,7 @@ args.add(arg);
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0xc1804900,0xc1804900,0xc1804900,0xc1804900,0x2000000,0x40,0x0,0x81804100,0x200,0x30000000,0x30000000,0x3000,0x3000,0xe8000,0xe8000,0x1800000,0x1800000,0x310000,0x310000,0x81804100,0xc000000,0xc000000,0x80000100,0x400000,};
+      jj_la1_0 = new int[] {0xc1804900,0xc1804900,0xc1804900,0xc1804900,0x2000000,0x40,0x0,0x81804100,0x200,0x10000000,0x20000000,0x3000,0x3000,0xe8000,0xe8000,0x1800000,0x1800000,0x310000,0x310000,0x81804100,0xc000000,0xc000000,0x80000100,0x400000,};
    }
    private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {0x3e2b,0x3e2b,0x3e2b,0x3e2b,0x0,0x20,0x40,0x3e01,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x3e01,0x0,0x0,0x3e01,0x0,};

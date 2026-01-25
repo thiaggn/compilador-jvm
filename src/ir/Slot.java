@@ -9,6 +9,6 @@ public class Slot
 	public Slot(int indice, String nome)
 	{
 		this.indice = indice;
-		this.nome = nome;
+		this.nome = String.format("%%%s", nome);
 	}
 }

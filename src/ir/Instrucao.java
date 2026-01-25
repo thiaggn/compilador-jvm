@@ -2,5 +2,5 @@ package ir;
 
 public abstract class Instrucao {
 	
-	abstract void print();
+	public abstract void print();
 }

@@ -10,6 +10,8 @@ import java.nio.file.Path;
 import analisador.AnalisadorSemantico;
 import parser.Parser;
 import analisador.Analise;
+import intermediario.CodigoIntermediario;
+import intermediario.GeradorIR;
 
 public class Main 
 {
@@ -31,13 +33,13 @@ public class Main
 				return;
 			}
 
-			System.out.println("[ok] passou na análise semântica!");
-
 			if (args.length > 1 && args[1].equals("--arvore"))
 			{
 				programa.print();
 			}
 
+			CodigoIntermediario codigo = GeradorIR.traduzir(programa);
+			codigo.exibir();
 		} 
 		catch (Throwable err) 
 		{

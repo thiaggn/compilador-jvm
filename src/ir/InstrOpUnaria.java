@@ -4,7 +4,7 @@ public class InstrOpUnaria extends Instrucao
 {
 
 	@Override
-	void print()
+	public void print()
 	{
 		
 	}

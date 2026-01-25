@@ -156,7 +156,7 @@ Expr EXPR_ATRIBUICAO(): {Id dest; Expr valor, expr; }
 
 Expr EXPR_TERNARIA(): {Expr cond, esq, dir; } 
 {
-	cond = EXPR_LOGICO()
+	cond = EXPR_OR()
 	(
 		<INTERROG> esq = EXPR_TERNARIA() <DOIS_PONTOS> dir = EXPR_TERNARIA()
 		{ cond = new ExprTernaria(cond, esq, dir); }
@@ -164,14 +164,23 @@ Expr EXPR_TERNARIA(): {Expr cond, esq, dir; }
 	{ return cond; }
 }
 
-Expr EXPR_LOGICO(): {Expr esq, dir; Token tokOp; }
+
+Expr EXPR_OR(): {Expr esq, dir; Token tokOp;}
 {
-	esq = EXPR_IGUAL() 
-	(
-		  tokOp = <OR>  dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.OuOu, tokOp); }
-		| tokOp = <AND> dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.EE, tokOp); } 
-	)*
-	{ return esq; }
+    esq = EXPR_AND()
+    (
+        tokOp = <OR> dir = EXPR_AND() { esq = new ExprBinaria(esq, dir, Operador.OuOu, tokOp); }
+    )*
+    { return esq; }
+}
+
+Expr EXPR_AND(): {Expr esq, dir; Token tokOp;}
+{
+    esq = EXPR_IGUAL()
+    (
+        tokOp = <AND> dir = EXPR_IGUAL() { esq = new ExprBinaria(esq, dir, Operador.EE, tokOp); }
+    )*
+    { return esq; }
 }
 
 Expr EXPR_IGUAL(): {Expr esq, dir; Token tokOp;}
@@ -180,7 +189,7 @@ Expr EXPR_IGUAL(): {Expr esq, dir; Token tokOp;}
 	(
 		  tokOp = <IGUAL>     dir = EXPR_RELACIONAL() { esq = new ExprBinaria(esq, dir, Operador.Igual, tokOp); }
 		| tokOp = <DIFERENTE> dir = EXPR_RELACIONAL() { esq = new ExprBinaria(esq, dir, Operador.Dif, tokOp); }
-	)*
+	)?
 	{ return esq; }
 }
 
@@ -192,7 +201,7 @@ Expr EXPR_RELACIONAL(): {Expr esq, dir; Token tokOp;}
 		| tokOp = <MAIOR_IGUAL> dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.MaiorIg, tokOp); }
 		| tokOp = <MENOR>       dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.Menor, tokOp); }
 		| tokOp = <MENOR_IGUAL> dir = EXPR_ADICAO() { esq = new ExprBinaria(esq, dir, Operador.MenorIg, tokOp); }
-	)*
+	)?
 	{ return esq; }
 }
 

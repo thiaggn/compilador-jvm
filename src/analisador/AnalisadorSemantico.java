@@ -140,7 +140,7 @@ public class AnalisadorSemantico
 				// double b := a;  <-- promove a (10) para double
 				// double c := 10.0;  <-- promove 10.0 (float) para double
 				// 
-				if (decl.exprInicial.tipo.ehPrimitivo && declTipo.ehPrimitivo)
+				if (decl.exprInicial.tipo.ehPrimitivo() && declTipo.ehPrimitivo())
 				{
 					if (decl.exprInicial.tipo.prioridade != declTipo.prioridade)
 					{
@@ -213,7 +213,7 @@ public class AnalisadorSemantico
 			// }
 			// exibe a;  <-- imprime 1
 			//
-			if (atrib.exprInicial.tipo.ehPrimitivo && simbolo.tipo.ehPrimitivo)
+			if (atrib.exprInicial.tipo.ehPrimitivo() && simbolo.tipo.ehPrimitivo())
 			{
 				if (simbolo.tipo.prioridade != atrib.exprInicial.tipo.prioridade)
 				{
@@ -338,7 +338,7 @@ public class AnalisadorSemantico
 			{
 				// Quando o símbolo referenciado tem um tipo diferente da expressão atribuìda,
 				// o símbolo é redeclarado. No entanto, o símbolo deve permitir redeclaração.
-				if (!(atrib.exprInicial.tipo.ehPrimitivo && simbolo.tipo.ehPrimitivo) && simbolo.ehRedeclaravel)
+				if (!(atrib.exprInicial.tipo.ehPrimitivo() && simbolo.tipo.ehPrimitivo()) && simbolo.ehRedeclaravel)
 				{
 					ast.Simbolo novoSimbolo = new ast.Simbolo(simbolo.nome, atrib.exprInicial.tipo, true);
 					escopos.redeclarar(simbolo.nome, novoSimbolo);
@@ -358,61 +358,76 @@ public class AnalisadorSemantico
 		analisarExpr(expr.esq);
 		analisarExpr(expr.dir);
 
-		if (expr.esq.tipo == ast.SimboloTipo.Indeterminado || expr.dir.tipo == ast.SimboloTipo.Indeterminado)
-		{
-			return;
-		}
+		if (!expr.esq.tipo.ehValido() || !expr.dir.tipo.ehValido())
 
-		// impede operações ilegais entre strings
-		if (expr.dir.tipo == ast.SimboloTipo.String && expr.esq.tipo == ast.SimboloTipo.String)
+		if (expr.esq.tipo == ast.SimboloTipo.String && expr.dir.tipo == ast.SimboloTipo.String)
 		{
-			if (expr.op != ast.Operador.Mais)
+			if (expr.operador != ast.Operador.Mais)
 			{
-				var msg = String.format("operador '%s' não é permitido entre strings.", expr.op.toString());
-				erro(expr, msg);
+				erro(expr, "operador '" + expr.operador + "' não é permitido entre strings.");
 			}
 			expr.tipo = ast.SimboloTipo.String;
 			return;
 		}
 
-		// garante que aritmética seja realizada com primitivos
-		if (!(expr.esq.tipo.ehPrimitivo && expr.dir.tipo.ehPrimitivo))
+		// garante que os operandos sejam primitivos
+		if (!(expr.esq.tipo.ehPrimitivo() && expr.dir.tipo.ehPrimitivo()))
 		{
-			var msg = String.format(
+			erro(expr, String.format(
 				"operação '%s' entre tipos incompatíveis: esquerda é '%s', direita é '%s'.",
-				expr.op.toString(), expr.esq.tipo.nome, expr.dir.tipo.nome
-			);
-			erro(expr, msg);
+				expr.operador, expr.esq.tipo.nome, expr.dir.tipo.nome
+			));
 			return;
 		}
 
-		// garante que operações lógicas sejam realizadas entre inteiros
-		if (expr.op == ast.Operador.EE || expr.op == ast.Operador.OuOu)
+		if (expr.operador == ast.Operador.EE || expr.operador == ast.Operador.OuOu)
 		{
-			if (expr.esq.tipo == ast.SimboloTipo.Float || expr.esq.tipo == ast.SimboloTipo.Double)
+			if (expr.esq.tipo != ast.SimboloTipo.Bool)
 			{
-				expr.esq = new ast.ExprConversao(expr.esq, ast.SimboloTipo.Inteiro);
+				expr.esq = new ast.ExprConversao(expr.esq, ast.SimboloTipo.Bool);
 			}
-			if (expr.dir.tipo == ast.SimboloTipo.Float || expr.dir.tipo == ast.SimboloTipo.Double)
+			if (expr.dir.tipo != ast.SimboloTipo.Bool)
 			{
-				expr.dir = new ast.ExprConversao(expr.dir, ast.SimboloTipo.Inteiro);
+				expr.dir = new ast.ExprConversao(expr.dir, ast.SimboloTipo.Bool);
 			}
-
-			expr.tipo = ast.SimboloTipo.Inteiro;
+			expr.tipo = ast.SimboloTipo.Bool;
 			return;
 		}
 
-		if (expr.esq.tipo.prioridade > expr.dir.tipo.prioridade) 
+		switch (expr.operador)
 		{
-			expr.dir = new ast.ExprConversao(expr.dir, expr.esq.tipo);
-		}
-		else if (expr.dir.tipo.prioridade > expr.esq.tipo.prioridade)
-		{
-			expr.esq = new ast.ExprConversao(expr.esq, expr.dir.tipo);
-		}
+			case ast.Operador.Mais:
+			case ast.Operador.Menos:
+			case ast.Operador.Mul:
+			case ast.Operador.Div:
+				if (expr.esq.tipo.prioridade > expr.dir.tipo.prioridade)
+				{
+					expr.dir = new ast.ExprConversao(expr.dir, expr.esq.tipo);
+				}
+				else if (expr.dir.tipo.prioridade > expr.esq.tipo.prioridade)
+				{
+					expr.esq = new ast.ExprConversao(expr.esq, expr.dir.tipo);
+				}
+				expr.tipo = expr.esq.tipo;
+				break;
 
-		expr.tipo = expr.esq.tipo;
+			// operadores relacionais retornam bool
+			case ast.Operador.Menor:
+			case ast.Operador.Maior:
+			case ast.Operador.MenorIg:
+			case ast.Operador.MaiorIg:
+			case ast.Operador.Igual:
+			case ast.Operador.Dif:
+				expr.tipo = ast.SimboloTipo.Bool;
+				break;
+
+			default:
+				erro(expr, "operador desconhecido ou não tratado: " + expr.operador);
+				expr.tipo = ast.SimboloTipo.Indeterminado;
+				break;
+		}
 	}
+
 
 	static void analisarExprUnaria(ast.ExprUnaria exprUn)
 	{
@@ -426,7 +441,7 @@ public class AnalisadorSemantico
 		analisarExpr(expr.exprEntao);
 		analisarExpr(expr.exprSenao);
 
-		if (expr.exprEntao.tipo != ast.SimboloTipo.Indeterminado && expr.exprSenao.tipo != ast.SimboloTipo.Indeterminado)
+		if (expr.exprEntao.tipo.ehValido() && expr.exprSenao.tipo.ehValido())
 		{
 			if (expr.exprEntao.tipo != expr.exprSenao.tipo)
 			{
@@ -476,7 +491,7 @@ public class AnalisadorSemantico
 
 			if (tipoDoParametro != exprArgumento.tipo)
 			{
-				if (tipoDoParametro.ehPrimitivo && exprArgumento.tipo.ehPrimitivo)
+				if (tipoDoParametro.ehPrimitivo() && exprArgumento.tipo.ehPrimitivo())
 				{
 					if (exprArgumento.tipo.prioridade != tipoDoParametro.prioridade)
 					{
@@ -515,7 +530,7 @@ public class AnalisadorSemantico
 
 		escopos.abrirEscopo(); // início do escopo do laço while
 		{
-			if (!cmd.exprCondicao.tipo.ehPrimitivo)
+			if (!cmd.exprCondicao.tipo.ehPrimitivo())
 			{
 				var msg = String.format(
 					"o tipo da expressão de condição deve ser um primitivo; encontrou '%s'", 
@@ -533,7 +548,7 @@ public class AnalisadorSemantico
 	static ast.CmdIf analisarIf(ast.CmdIf cmd)
 	{
 		analisarExpr(cmd.exprCondicao);
-		if (!cmd.exprCondicao.tipo.ehPrimitivo)
+		if (!cmd.exprCondicao.tipo.ehPrimitivo())
 		{
 			erro(cmd.exprCondicao, "a expressão de condição de um if deve resultar num primitivo.");
 		}
@@ -582,7 +597,7 @@ public class AnalisadorSemantico
 			analisarExpr(cmd.exprTeste);
 			analisarExpr(cmd.exprIterativa);
 	
-			if (!cmd.exprTeste.tipo.ehPrimitivo)
+			if (!cmd.exprTeste.tipo.ehPrimitivo())
 			{
 				erro(cmd.exprTeste, 
 					String.format(

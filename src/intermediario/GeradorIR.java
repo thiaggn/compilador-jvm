@@ -11,13 +11,12 @@ public class GeradorIR
 	static int proximoIndice;
 	static int proximoMarcador;
  
-	
 	static void emitir(ir.Instrucao instrucao)
 	{
 		instrucoes.add(instrucao);
 	}
 
-	static ir.Marcador criarMarcador()
+	static ir.Marcador novoMarcador()
 	{
 		return new ir.Marcador(proximoMarcador++);
 	}
@@ -38,156 +37,224 @@ public class GeradorIR
 		return slots.get(ref);
 	}
 
-	public static ArrayList<ir.Instrucao> traduzir(ast.Programa programa)
+	public static CodigoIntermediario traduzir(ast.Programa programa)
 	{
 		proximoIndice = 1;
 		proximoMarcador = 0;
 		slots = new HashMap<>();
 		instrucoes = new ArrayList<>();
 
-		for (ast.No no : programa.nos) 
-		{
-			traduzirNo(no);
-		}
+		emitir(new ir.Marcador("main"));
+		programa.nos.forEach(no -> traduzirNo(no));
+		emitir(new ir.InstrRetorno());
 
-		return instrucoes;
+		return new CodigoIntermediario(instrucoes);
 	}
 
 	static void traduzirNo(ast.No no) 
 	{
 		switch (no)
 		{
-			case ast.ExprAtribuicao  atrib -> traduzirAtribuicao(atrib);
-			case ast.CmdDeclVariavel cmd   -> traduzirDeclaracao(cmd);
-			case ast.CmdWhile        cmd   -> traduzirWhile(cmd);
-			case ast.CmdFor          cmd   -> traduzirFor(cmd);
-			case ast.CmdExibe        cmd   -> traduzirExibe(cmd);
-			case ast.CmdIf           cmd   -> traduzirIf(cmd);
-
-			default -> throw new Error("");
+			case ast.ExprAtribuicao  exprAtrib -> traduzirAtribuicao(exprAtrib);
+			case ast.CmdDeclVariavel cmdDecl   -> traduzirDeclaracao(cmdDecl);
+			default                            -> throw new Error("");
 		};
-	}
-
-	static void traduzirAtribuicao(ast.ExprAtribuicao atrib)
-	{
-
-	}
-
-	static void traduzirDeclaracao(ast.CmdDeclVariavel cmd)
-	{
-		ir.Formato formato = resolverFormato(cmd.simbolo.tipo);
-		ir.Slot    slot    = criarSlot(formato.bytes, cmd.simbolo.ref, cmd.simbolo.nome);
-
-		traduzirExpr(cmd.exprInicial);
-		emitir(new ir.Store(slot,formato));
-	}
-
-	static void traduzirFor(ast.CmdFor cmd)
-	{
-
-	}
-
-	static void traduzirWhile(ast.CmdWhile cmd)
-	{
-
-	}
-
-	static void traduzirExibe(ast.CmdExibe cmd)
-	{
-
-	}
-
-	static void traduzirIf(ast.CmdIf cmd)
-	{
-
 	}
 
 	static void traduzirExpr(ast.Expr expr)
 	{
 		switch(expr)	
 		{
-			case ast.ExprBinaria   exprBin  -> traduzirExprBinaria(exprBin);
-			case ast.ExprConversao exprConv -> traduzirExprConversao(exprConv);
-			case ast.ExprId        id       -> traduzirExprId(id);
-			case ast.ExprInteiro   literal  -> emitir(new ir.InstrPush(literal.valor));
-			case ast.ExprFloat     literal  -> emitir(new ir.InstrPush(literal.valor));
-			case ast.ExprBool      literal  -> emitir(new ir.InstrPush(literal.valor));
-			default -> {}
+			case ast.ExprInteiro   exprInt   -> emitir(new ir.InstrPush(exprInt.valor));
+			case ast.ExprFloat     exprFloat -> emitir(new ir.InstrPush(exprFloat.valor));
+			case ast.ExprBool      exprBool  -> emitir(new ir.InstrPush(exprBool.valor));
+			case ast.ExprId        exprId    -> traduzirExprId(exprId);
+			case ast.ExprBinaria   exprBin   -> traduzirExprBinaria(exprBin);
+			default                          -> throw new Error();
 		}
+	}
+
+	static void traduzirDeclaracao(ast.CmdDeclVariavel cmd)
+	{
+		ir.Formato formato = mapearFormato(cmd.simbolo.tipo);
+		ir.Slot    slot    = criarSlot(formato.bytes, cmd.simbolo.ref, cmd.simbolo.nome);
+
+		traduzirExpr(cmd.exprInicial);
+		emitir(new ir.InstrStore(slot,formato));
+	}
+
+	static void traduzirAtribuicao(ast.ExprAtribuicao atrib)
+	{
+		ir.Formato formato = mapearFormato(atrib.tipo);
+		ir.Slot    slot    = obterSlotAssociado(atrib.simboloDestino.ref);
+
+		traduzirExpr(atrib.exprInicial);
+		emitir(new ir.InstrStore(slot, formato));
 	}
 
 	static void traduzirExprId(ast.ExprId expr)
 	{
-		ir.Slot slot = obterSlotAssociado(expr.simbolo.ref);
-		emitir(new ir.InstrLoad(slot));
-	}
+		ir.Slot    slot    = obterSlotAssociado(expr.simbolo.ref);
+		ir.Formato formato = mapearFormato(expr.tipo);
 
-	static void traduzirExprUnaria(ast.ExprBinaria expr)
-	{
-
+		emitir(new ir.InstrLoad(slot, formato));
 	}
 
 	static void traduzirExprBinaria(ast.ExprBinaria expr)
 	{
-		traduzirExpr(expr.esq);
-		traduzirExpr(expr.dir);
-
-		ir.Formato formato = resolverFormato(expr.tipo);
-
-		switch (expr.op)
+		if (expr.operador == ast.Operador.OuOu)
 		{
-			case ast.Operador.Mais:
-				emitir(new ir.InstrOpBinaria(ir.Operacao.Adicao, formato));
-				break;
-			case ast.Operador.Menos:
-				emitir(new ir.InstrOpBinaria(ir.Operacao.Subtracao, formato));
-				break;
-			case ast.Operador.Mul:
-				emitir(new ir.InstrOpBinaria(ir.Operacao.Multiplicacao, formato));
-				break;
-			case ast.Operador.Div:
-				emitir(new ir.InstrOpBinaria(ir.Operacao.Divisao, formato));
-				break;
-			case ast.Operador.Resto:
-				emitir(new ir.InstrOpBinaria(ir.Operacao.Resto, formato));
-				break;
+			ir.Marcador mTrue  = novoMarcador();
+			ir.Marcador mFalse = novoMarcador();
+			ir.Marcador mSaida = novoMarcador();
 
-			case ast.Operador.Menor:
-	
-				break;
+			traduzirExprCC(expr.esq, false, false, mTrue, mFalse);
+			
+			// Se a expressão da direita também for um OuOu, então ela não é a expressão mais à
+			// direita da cadeia. Nessas condições, não é necessário negá-la. Além disso, 
+			// sinalizamos para a função de tradução que essa expressão não é a expressão raiz.
+			if (expr.dir instanceof ast.ExprBinaria bin && bin.operador == ast.Operador.OuOu)
+			{
+				traduzirExprCC(expr.dir, false, false, mTrue, null);
+			}
+			else if (expr.dir instanceof ast.ExprBinaria bin && bin.operador == ast.Operador.EE)
+			{
+				traduzirExprCC(expr.dir, false, false, null, mFalse);
+			}
+			else
+			{
+				traduzirExprCC(expr.dir, true, false, mFalse, null);
+			}
 
-			case ast.Operador.MenorIg:
-				break;
+			emitir(mTrue);
+			emitir(new ir.InstrPush(1));
+			emitir(new ir.InstrGoto(mSaida));
 
-			case ast.Operador.Maior:
-				break;
+			emitir(mFalse);
+			emitir(new ir.InstrPush(0));
+			emitir(mSaida);
+		}
+		else if (expr.operador == ast.Operador.EE)
+		{
+			
+		}
+		else if (expr.operador.ehRelacional())
+		{
+			ir.Marcador mTrue = novoMarcador();
+			ir.Marcador mSaida = novoMarcador();
 
-			case ast.Operador.MaiorIg:
-				break;
+			traduzirExprCC(expr, false, false, mTrue, null);
 
-			case ast.Operador.Igual:
-				break;
-
-			case ast.Operador.Dif:
-				break;
-
-			default:
-				throw new Error();
+			emitir(new ir.InstrPush(0));
+			emitir(mTrue);
+			emitir(new ir.InstrPush(1));
+			emitir(new ir.InstrGoto(mSaida));
+			emitir(mSaida);
 		}
 	}
 
-	static void traduzirExprConversao(ast.ExprConversao expr)
+	/// O parâmetro 'negar' indica se a condição deve ser invertida ao gerar a instrução de salto. Por
+	/// exemplo, se 'negar == true', o operador '<' vai virar um '>=' em vez de '<'. É usada só no último
+	/// teste de uma expressão lógica 'OU'.
+	/// 
+	/// O parâmetro 'raiz' indica se a expressão passada é a primeira expressão lógica numa cadeia de 
+	/// expressões lógicas.
+	static void traduzirExprCC(ast.Expr expr, boolean negar, boolean raiz, ir.Marcador mT, ir.Marcador mF)
 	{
-		ir.Formato origem = resolverFormato(expr.alvo.tipo);
-		ir.Formato destino = resolverFormato(expr.tipo);
-		emitir(new ir.InstrConversao(origem, destino));
-	}
-	
-	static ir.Formato resolverFormato(ast.SimboloTipo tipo)
-	{
-		if (tipo == ast.SimboloTipo.Float)   return ir.Formato.Float;
-		if (tipo == ast.SimboloTipo.Inteiro) return ir.Formato.Int;
-		throw new Error();
+		if (expr instanceof ast.ExprBinaria bin)
+		{
+			 traduzirExprBinariaCC(bin, negar, raiz, mT, mF);
+		}
+		else if (expr instanceof ast.ExprConversao conv)
+		{
+			traduzirExprCC(conv.alvo, negar, raiz, mT, mF);
+		}
+		else if (expr instanceof ast.ExprInteiro exprInt)
+		{
+			ir.Condicao condicao = negar ? ir.Condicao.Igual : ir.Condicao.Diferente;
+			emitir(new ir.InstrPush(exprInt.valor));
+			emitir(new ir.InstrZeroSaltarSe(condicao, mT, ir.Formato.Int));
+		}
+		else if (expr instanceof ast.ExprFloat exprFloat)
+		{
+			ir.Condicao condicao = negar ? ir.Condicao.Igual : ir.Condicao.Diferente;
+			emitir(new ir.InstrPush(exprFloat.valor));
+			emitir(new ir.InstrZeroSaltarSe(condicao, mT, ir.Formato.Float));
+		}
+		else if (expr instanceof ast.ExprId exprId)
+		{
+			ir.Condicao condicao = negar ? ir.Condicao.Igual : ir.Condicao.Diferente;
+			ir.Formato  formato  = mapearFormato(exprId.tipo);
+			ir.Slot     slot     = obterSlotAssociado(exprId.simbolo.ref);
+
+			emitir(new ir.InstrLoad(slot, formato));
+			emitir(new ir.InstrZeroSaltarSe(condicao, mT, formato));
+		}
+		else
+		{
+			throw new Error(String.format("não suportado: '%s'", expr.getClass().getName()));
+		}
 	}
 
+	static void traduzirExprBinariaCC(ast.ExprBinaria expr, boolean negar, boolean raiz, ir.Marcador mT, ir.Marcador mF)
+	{
+		if (expr.operador == ast.Operador.EE) 
+		{
+			traduzirExprCC(expr.esq, false, false, mF, null);
+			traduzirExprCC(expr.dir, false, false, mF, null);
+		}
+		else if (expr.operador == ast.Operador.OuOu)
+		{
+			traduzirExprCC(expr.esq, false, raiz, mT, mF);
+
+			if (raiz == false) traduzirExprCC(expr.dir, false, false, mF, null);
+			else               traduzirExprCC(expr.dir, true,  false, mT, mF);
+		}
+		else if (expr.operador.ehRelacional())
+		{
+			ir.Formato  fmt  = mapearFormato(expr.tipo);
+			ir.Condicao cond = mapearCondicao(expr.operador);
+
+			traduzirExpr(expr.esq);
+			traduzirExpr(expr.dir);
+			emitir(new ir.InstrSaltarSe(negar ? cond.negado() : cond, mT, fmt));
+		}
+	}
+
+	static ir.Formato mapearFormato(ast.SimboloTipo tipo)
+	{
+		return switch(tipo.primitivo)
+		{
+			case ast.Primitivo.Int   -> ir.Formato.Int;
+			case ast.Primitivo.Float -> ir.Formato.Float;
+			default                  -> throw new Error();
+		};
+	}
+
+	static ir.Operacao mapearOperacao(ast.Operador op)
+	{
+		return switch (op)
+		{
+			case ast.Operador.Mais  -> ir.Operacao.Adicao;
+			case ast.Operador.Menos -> ir.Operacao.Subtracao;
+			case ast.Operador.Mul   -> ir.Operacao.Multiplicacao;
+			case ast.Operador.Div   -> ir.Operacao.Divisao;
+			case ast.Operador.Resto -> ir.Operacao.Resto;
+			default                 -> throw new Error("Operador deve ser aritmetico");
+		};
+	}
+
+	static ir.Condicao mapearCondicao(ast.Operador op)
+	{
+		return switch (op)
+		{
+			case ast.Operador.Menor   -> ir.Condicao.Menor;
+			case ast.Operador.MenorIg -> ir.Condicao.MenorIg;
+			case ast.Operador.Maior   -> ir.Condicao.Maior;
+			case ast.Operador.MaiorIg -> ir.Condicao.MaiorIg;
+			case ast.Operador.Igual   -> ir.Condicao.Igual;
+			case ast.Operador.Dif     -> ir.Condicao.Diferente;
+			default                   -> throw new Error("Operador deve ser relacional");
+		};
+	}
 }

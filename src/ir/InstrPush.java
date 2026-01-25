@@ -27,7 +27,8 @@ public class InstrPush extends Instrucao
 
 	public void print()
 	{
-		if (formato == Formato.Float)    Print.instrucao("pushf", this.valorFloat);
-		else if (formato == Formato.Int) Print.instrucao("pushi", this.valorInt);
+		if (formato == Formato.Float)    Print.instrucao("push", this.valorFloat);
+		else if (formato == Formato.Int) Print.instrucao("push", this.valorInt);
+		else throw new Error();
 	}
 }
