@@ -30,44 +30,4 @@ public enum Operador {
 	public String toString() {
 		return simbolo;
 	}
-
-	public boolean ehBooleano()
-	{
-		switch(this)
-		{
-			case MaiorIg:
-			case Maior:
-			case Menor:
-			case MenorIg:
-			case Igual:
-			case Dif:
-			case EE:
-			case OuOu:
-				return true;
-			
-			default:
-				return false;
-		}
-	}
-
-	public boolean ehRelacional()
-	{
-		switch (this)
-		{
-			case Maior:
-			case MaiorIg:
-			case Menor:
-			case MenorIg:
-			case Igual:
-			case Dif:
-				return true;
-			default:
-				return false;
-		}
-	}
-
-	public boolean ehLogico()
-	{
-		return this == EE || this == OuOu;
-	}
 }

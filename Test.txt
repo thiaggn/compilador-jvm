@@ -1,6 +1,7 @@
 $BEGIN_PROGRAM
 
-int n := 27;
-bool k := 0 < (n < 20);
+int a := 5;
+int b := 6;
+int c := (a < b) * 6;
 
 $END_PROGRAM

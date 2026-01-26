@@ -359,6 +359,7 @@ public class AnalisadorSemantico
 		analisarExpr(expr.dir);
 
 		if (!expr.esq.tipo.ehValido() || !expr.dir.tipo.ehValido())
+			return;
 
 		if (expr.esq.tipo == ast.SimboloTipo.String && expr.dir.tipo == ast.SimboloTipo.String)
 		{

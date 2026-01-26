@@ -8,7 +8,7 @@ public enum Condicao {
 	Menor,
 	MenorIg;
 
-	public Condicao negado()
+	public Condicao inverso()
 	{
 		return switch (this)
 		{
