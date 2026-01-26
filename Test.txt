@@ -2,6 +2,11 @@ $BEGIN_PROGRAM
 
 int a := 5;
 int b := 6;
-int c := (a < b) * 6;
+float c := 7.0;
+
+if (a && b && c) then {
+	a := a * 2;
+} 
+a := 9;
 
 $END_PROGRAM

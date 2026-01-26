@@ -1,31 +1,28 @@
-int k := 10;
 
-bool a := k < 2 || (k < 3 || k < 4);
+class Main {
+	public static void main(String[] args) {
+		int a = 5;
+		int b = 6;
+		float c = 7.0f;
 
-; Compilador java
-main:
-	push	10
-	storei	%k
+		if (a != 0 && b != 0 && c != 0) {
+			a = a * 2;
+		} 
+		else if (a == 0 || b == 0 || c == 0)
+		{
+			b = b * 4;
+		}
+		else 
+		{
+			c = c * 8.0f;
+		}
 
-	loadi	%k
-	push	2
-	iflt    .L0
+		a = 9;
+	}
+}
 
-	loadi	%k
-	push	3
-	iflt    .L0
-
-	loadi	%k
-	push	4
-	ifge	.L2
-
-.L0:
-	push	1
-	goto   .L3
-
-.L2:
-	push	0
-
-.L3:
-	storei	%a
-	return
+{
+	"java.project.sourcePaths": [
+		"src"
+	]
+}

@@ -8,23 +8,23 @@ public class GeradorIR
 	static ArrayList<ir.Instrucao>   instrucoes;
 	static HashMap<Integer, ir.Slot> slots;
 
-	static int proximoIndice;
-	static int proximoMarcador;
+	static int contadorDeSlots;
+	static int contadorDeLabels;
  
 	static void emitir(ir.Instrucao instrucao)
 	{
 		instrucoes.add(instrucao);
 	}
 
-	static ir.Marcador novoMarcador()
+	static ir.Label criarLabel()
 	{
-		return new ir.Marcador(proximoMarcador++);
+		return new ir.Label(contadorDeLabels++);
 	}
 
 	static ir.Slot criarSlot(int bytes, int ref, String nome)
 	{
-		int indice = proximoIndice;
-		proximoIndice += bytes;
+		int indice = contadorDeSlots;
+		contadorDeSlots += bytes;
 
 		ir.Slot slot = new ir.Slot(indice, nome);
 		slots.put(ref, slot);
@@ -39,12 +39,12 @@ public class GeradorIR
 
 	public static CodigoIntermediario traduzir(ast.Programa programa)
 	{
-		proximoIndice = 1;
-		proximoMarcador = 0;
+		contadorDeSlots = 1;
+		contadorDeLabels = 0;
 		slots = new HashMap<>();
 		instrucoes = new ArrayList<>();
 
-		emitir(new ir.Marcador("main"));
+		emitir(new ir.Label("main"));
 		programa.nos.forEach(no -> traduzirNo(no));
 		emitir(new ir.InstrRetorno());
 
@@ -57,11 +57,39 @@ public class GeradorIR
 		{
 			case ast.ExprAtribuicao  exprAtrib -> traduzirAtribuicao(exprAtrib);
 			case ast.CmdDeclVariavel cmdDecl   -> traduzirDeclaracao(cmdDecl);
+			case ast.CmdIf           cmdIf     -> traduzirIf(cmdIf);
+			case ast.CmdFor			 cmdFor    -> traduzirFor(cmdFor);
+			case ast.CmdWhile		 cmdWhile  -> traduzirWhile(cmdWhile);
 			default                            -> throw new Error("");
 		};
 	}
 
-	// ---------------------------- Expressões como valor ---------------------------
+	static void traduzirIf(ast.CmdIf cmd)
+	{
+		ir.Label lSaida  = criarLabel();
+		ir.Label lSenao = criarLabel();
+		ir.Label lEntao = criarLabel();
+
+		traduzirCondicao(cmd.exprCondicao, lEntao, lSenao);
+
+		emitir(lSaida);
+	}
+
+	static void traduzirCondicao(ast.Expr expr, ir.Label lEntao, ir.Label lSenao)
+	{
+
+	}
+
+	static void traduzirWhile(ast.CmdWhile cmd)
+	{
+	
+	}
+
+	static void traduzirFor(ast.CmdFor cmd)
+	{
+
+	}
+
 	static void traduzirExpr(ast.Expr expr)
 	{
 		switch(expr)	
@@ -84,6 +112,11 @@ public class GeradorIR
 		if (conv.alvo.tipo.primitivo == conv.tipo.primitivo)
 		{
 			traduzirExpr(conv.alvo);
+		}
+		else {
+			ir.Formato origem  = mapearFormato(conv.alvo.tipo);
+			ir.Formato destino = mapearFormato(conv.tipo);
+			emitir(new ir.InstrConversao(origem, destino));
 		}
 	}
 
@@ -121,41 +154,48 @@ public class GeradorIR
 	{
 		if (expr.operador == ast.Operador.OuOu)
 		{
-			ir.Marcador mS = novoMarcador();
-			ir.Marcador mF = novoMarcador();
-			ir.Marcador mV = novoMarcador();
+			ir.Label lSaida = criarLabel();
+			ir.Label lFalso = criarLabel();
+			ir.Label lVerdade = criarLabel();
 
-			// expressão da esquerda
-			traduzirExprCC(expr.esq, false, mV, mF);
-			traduzirExprCC(expr.dir, true,  mV, mF);
+			traduzirExprCC(expr.esq, false, lVerdade, lFalso);
+			traduzirExprCC(expr.dir, true,  lVerdade, lFalso);
 
-			// instruções
-			emitir(mV);
+			emitir(lVerdade);
 			emitir(new ir.InstrPush(1));
-			emitir(new ir.InstrGoto(mS));
+			emitir(new ir.InstrJump(lSaida));
 
-			emitir(mF);
+			emitir(lFalso);
 			emitir(new ir.InstrPush(0));
 			
-			emitir(mS);
+			emitir(lSaida);
 		}
 		else if (expr.operador == ast.Operador.EE)
 		{
+			ir.Label mF = criarLabel();
+			ir.Label mS = criarLabel();
 
+			traduzirExprCC(expr.esq, true, mF, mF);
+			traduzirExprCC(expr.dir, true, mF, mF);
+
+			emitir(new ir.InstrPush(1));
+			emitir(new ir.InstrJump(mS));
+			emitir(mF);
+			emitir(new ir.InstrPush(0));
+			emitir(mS);
 		}
 	}
 
 	static void traduzirExprRelacional(ast.ExprBinaria expr)
 	{
-		ir.Marcador mV = novoMarcador();
-		ir.Marcador mS = novoMarcador();
+		ir.Label mS = criarLabel();
+		ir.Label mV = criarLabel();
 
 		traduzirExprRelacionalCC(expr, false, mV);
 		emitir(new ir.InstrPush(0));
-		emitir(new ir.InstrGoto(mS));
+		emitir(new ir.InstrJump(mS));
 		emitir(mV);
 		emitir(new ir.InstrPush(1));
-		emitir(new ir.InstrGoto(mS));
 		emitir(mS);
 	}
 
@@ -169,9 +209,7 @@ public class GeradorIR
 		emitir(new ir.InstrOpBinaria(operacao, formato));
 	}
 
-	// --------------------------- Expressões como curto circuito --------------------------
-
-	static void traduzirExprCC(ast.Expr expr, boolean negar, ir.Marcador mV, ir.Marcador mF)
+	static void traduzirExprCC(ast.Expr expr, boolean negar, ir.Label lV, ir.Label lF)
 	{
 		if (expr instanceof ast.ExprBinaria exprBin)
 		{
@@ -183,12 +221,12 @@ public class GeradorIR
 				case ast.Operador.Maior:
 				case ast.Operador.Dif:
 				case ast.Operador.Igual:
-					traduzirExprRelacionalCC(exprBin, negar, mV);
+					traduzirExprRelacionalCC(exprBin, negar, lV);
 					break;
 				
 				case ast.Operador.OuOu: 
 				case ast.Operador.EE:
-					traduzirExprLogicaCC(exprBin, negar, mV, mF);
+					traduzirExprLogicaCC(exprBin, negar, lV, lF);
 					break;
 
 				default:
@@ -197,13 +235,13 @@ public class GeradorIR
 		}
 		else if (expr instanceof ast.ExprConversao exprConv)
 		{
-			traduzirExprCC(exprConv.alvo, negar, mV, mF);
+			traduzirExprCC(exprConv.alvo, negar, lV, lF);
 		}
 		else if (expr instanceof ast.ExprInteiro exprInt)
 		{
 			ir.Condicao condicao = negar ? ir.Condicao.Igual : ir.Condicao.Diferente;
 			emitir(new ir.InstrPush(exprInt.valor));
-			emitir(new ir.InstrZeroSaltarSe(condicao, mV, ir.Formato.Int));
+			emitir(new ir.InstrZeroJumpIf(condicao, lV, ir.Formato.Int));
 		}
 		else if (expr instanceof ast.ExprId exprId)
 		{
@@ -212,7 +250,7 @@ public class GeradorIR
 			ir.Slot     slot     = obterSlotAssociado(exprId.simbolo.ref);
 
 			emitir(new ir.InstrLoad(slot, formato));
-			emitir(new ir.InstrZeroSaltarSe(condicao, mV, formato));
+			emitir(new ir.InstrZeroJumpIf(condicao, lV, formato));
 		}
 		else
 		{
@@ -220,31 +258,29 @@ public class GeradorIR
 		}
 	}
 
-	static void traduzirExprLogicaCC(ast.ExprBinaria expr, boolean negar, ir.Marcador mV, ir.Marcador mF)
+	static void traduzirExprLogicaCC(ast.ExprBinaria expr, boolean negar, ir.Label lV, ir.Label lF)
 	{
 		if (expr.operador == ast.Operador.OuOu)
 		{
-			traduzirExprCC(expr.esq, false, mV, mF);
-			traduzirExprCC(expr.dir, negar, mF, null);
+			traduzirExprCC(expr.esq, false, lV, lF);
+			traduzirExprCC(expr.dir, negar, lF, null);
 		}
 		else if (expr.operador == ast.Operador.EE)
 		{
-			traduzirExprCC(expr.esq, false, mF, null);
-			traduzirExprCC(expr.dir, false, mF, null);
+			traduzirExprCC(expr.esq, false, lF, lF);
+			traduzirExprCC(expr.dir, false, lF, lF);
 		}
 	}
 
-	static void traduzirExprRelacionalCC(ast.ExprBinaria expr, boolean negar, ir.Marcador mV)
+	static void traduzirExprRelacionalCC(ast.ExprBinaria expr, boolean negar, ir.Label lV)
 	{
 		ir.Formato  formato  = mapearFormato(expr.tipo);
 		ir.Condicao condicao = mapearCondicao(expr.operador);
 
 		traduzirExpr(expr.esq);
 		traduzirExpr(expr.dir);
-		emitir(new ir.InstrSaltarSe(negar ? condicao.inverso() : condicao, mV, formato));
+		emitir(new ir.InstrJumpIf(negar ? condicao.inverso() : condicao, lV, formato));
 	}
-
-	// --------------------------------------------------------------------------------------
 
 	static void traduzirDeclaracao(ast.CmdDeclVariavel cmd)
 	{

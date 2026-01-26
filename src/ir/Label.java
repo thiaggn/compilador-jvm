@@ -1,15 +1,15 @@
 package ir;
 
-public class Marcador extends Instrucao
+public class Label extends Instrucao
 {
 	public String id;
 
-	public Marcador(int id)
+	public Label(int id)
 	{
 		this.id = String.format(".L%d", id);
 	}
 
-	public Marcador(String id)
+	public Label(String id)
 	{
 		this.id = id;
 	}
