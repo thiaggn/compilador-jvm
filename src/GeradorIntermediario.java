@@ -78,9 +78,10 @@ public class GeradorIntermediario
 
 	static void traduzirExibe(ast.CmdExibe cmdExibe)
 	{
+		ir.Formato formato = mapearFormato(cmdExibe.valor.tipo);
 		emitir(new ir.InstrCarregarEstatico("stdout"));
 		traduzirExpr(cmdExibe.valor);
-		emitir(new ir.InstrChamadaFunc("println"));
+		emitir(new ir.InstrChamadaFunc("println", formato));
 	}
 
 	static void traduzirIncremento(ast.ExprUnaria exprUn)
@@ -448,11 +449,11 @@ public class GeradorIntermediario
 	{
 		return switch(tipo.primitivo)
 		{
-			case ast.Primitivo.Int      -> ir.Formato.Int;
-			case ast.Primitivo.Float    -> ir.Formato.Float;
-			case ast.Primitivo.Ponteiro -> ir.Formato.Referencia;
-
-			default                  -> throw new Error("Impossível mapear formato");
+			case ast.Primitivo.Int        -> ir.Formato.Int;
+			case ast.Primitivo.Float      -> ir.Formato.Float;
+			case ast.Primitivo.String     -> ir.Formato.String;
+			case ast.Primitivo.Referencia -> ir.Formato.Referencia;
+			default                       -> throw new Error("Impossível mapear formato");
 		};
 	}
 

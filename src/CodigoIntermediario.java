@@ -15,7 +15,7 @@ public class CodigoIntermediario
 		this.quantidadeDeSlots = slots;
 	}
 
-	public void exibir()
+	public void print()
 	{
 		System.out.printf("\n[ok] Gerou %d instruções\n", this.itens.size());
 

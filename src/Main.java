@@ -1,11 +1,14 @@
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.InputStream;
+
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 import parser.Parser;
 
@@ -15,26 +18,41 @@ public class Main
 	{
 		try 
 		{
-			File arquivo = new File(args[0]);
-			InputStream stream = new FileInputStream(arquivo);
+			File entrada = new File(args[0]);
 
-			var parser = new Parser(stream);
+			var parser = new Parser(new FileInputStream(entrada));
 			var programa = parser.gerarAST();
 
 			Analise analise = AnalisadorSemantico.analisar(programa);
-			if (!analise.ok())
-			{
+			if (!analise.ok()) {
 				analise.exibirErros();
 				return;
 			}
+			CodigoIntermediario codigo = GeradorIntermediario.traduzir(programa);
 
-			if (args.length > 1 && args[1].equals("--arvore"))
+			Writer saida = criarArquivo("./saida/Programa.j");
+			GeradorDestino.gerar(saida, codigo);
+			saida.close();
+
+			if (Arrays.asList(args).contains("--arvore"))
 			{
 				programa.print();
+				System.out.println();
 			}
-
-			CodigoIntermediario codigo = GeradorIntermediario.traduzir(programa);
-			codigo.exibir();
+			if (Arrays.asList(args).contains("--ir"))
+			{
+				 codigo.print();
+				 System.out.println();
+			}
+			if (Arrays.asList(args).contains("--j"))
+			{
+				BufferedReader reader = new BufferedReader(new FileReader("./saida/Programa.j"));
+            	String linha;
+				while ((linha = reader.readLine()) != null) {
+					System.out.println(linha);
+				}
+				reader.close();
+			}
 		} 
 		catch (Throwable err) 
 		{
@@ -42,12 +60,15 @@ public class Main
 		}
 	}
 
-	static Writer criarArquivo(String nome) throws Exception
+	static Writer criarArquivo(String caminho) throws Exception
 	{
-		Path dir = Path.of("saida");
-		Files.createDirectories(Path.of("saida"));
-		var arquivo = new FileWriter(dir.resolve(nome).toFile());
-		var buffer = new BufferedWriter(arquivo);
-		return buffer;
+		Path arquivo = Path.of(caminho);
+		Path diretorio = arquivo.getParent();
+
+		if (diretorio != null) {
+			Files.createDirectories(diretorio);
+		}
+
+		return new BufferedWriter(new FileWriter(arquivo.toFile()));
 	}
 }

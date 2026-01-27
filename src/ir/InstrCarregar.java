@@ -2,8 +2,8 @@ package ir;
 
 public class InstrCarregar extends Instrucao
 {
-	Slot slot;
-	Formato formato;
+	public Slot    slot;
+	public Formato formato;
 
 	public InstrCarregar(Slot slot, Formato formato)
 	{

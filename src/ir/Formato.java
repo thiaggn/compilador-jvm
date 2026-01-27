@@ -5,8 +5,10 @@ public enum Formato
 	Short,
 	Float,
 	Int,
-	Double ,
+	Double,
+	Char,
 	Long,
+	String,
 	Referencia;
 
 	public int tamanho()
@@ -15,11 +17,12 @@ public enum Formato
 		{
 			case Short      -> 1;
 			case Float      -> 1;
+			case Char       -> 1;
 			case Int        -> 1;
 			case Double     -> 2;
 			case Long       -> 2;
-			case Referencia -> 2;
-			default -> throw new Error();
+			case String     -> 1;
+			case Referencia -> 1;
 		};
 	}
 

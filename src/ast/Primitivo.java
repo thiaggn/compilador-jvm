@@ -8,5 +8,6 @@ public enum Primitivo
 	Double,
 	Float,
 	Outro,
-	Ponteiro,
+	String,
+	Referencia,
 }

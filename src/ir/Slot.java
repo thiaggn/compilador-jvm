@@ -2,8 +2,8 @@ package ir;
 
 public class Slot 
 {
-	String nome;
-	int indice;
+	public String nome;
+	public int    indice;
 
 	public Slot(int indice, String nome)
 	{
