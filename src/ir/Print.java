@@ -30,6 +30,11 @@ class Print {
 		System.out.printf("\u001B[90m    %s\u001B[0m\u001B[14G%s%n", nome, bd.toPlainString());
 	}
 
+	static void instrucao(String nome, String op1, int op2)
+	{
+		System.out.printf("\u001B[90m    %s\u001B[0m\u001B[14G%s, %d\n", nome, op1, op2);
+	}
+
 	static void quebra()
 	{
 		System.out.println();

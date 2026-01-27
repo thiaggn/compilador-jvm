@@ -1,4 +1,4 @@
-package analisador;
+
 
 
 public class ErroSemantico

@@ -3,13 +3,13 @@ package ast;
 public class ExprUnaria extends Expr
 {
 	public Expr     expr;
-	public Operador op;
+	public Operador operador;
 	
 	public ExprUnaria(Expr expr, Operador op, parser.Token tokOp)
 	{
 		super(tokOp.beginLine, tokOp.beginColumn, SimboloTipo.Indeterminado);
 		this.expr = expr;
-		this.op   = op;
+		this.operador   = op;
 	}
 
 	@Override
@@ -17,7 +17,7 @@ public class ExprUnaria extends Expr
 	{
 		Print.abreObjeto("ExprUnária");
 		Print.campoComValor("tipo", tipo.nome);
-		Print.campoComValor("operador", op.toString());
+		Print.campoComValor("operador", operador.toString());
 		Print.campoComObjeto("expr", expr);
 		Print.fechaObjeto();
 	}

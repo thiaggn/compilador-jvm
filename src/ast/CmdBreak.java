@@ -1,6 +1,6 @@
 package ast;
 
-public final class CmdBreak extends Cmd
+public final class CmdBreak extends No
 {
 	protected CmdBreak(int linha, int coluna) 
 	{

@@ -6,7 +6,14 @@ public enum Condicao {
 	Maior,
 	MaiorIg,
 	Menor,
-	MenorIg;
+	MenorIg,
+	
+	IgualZero,
+	DiferenteZero,
+	MaiorZero,
+	MaiorIgZero,
+	MenorZero,
+	MenorIgZero;
 
 	public Condicao inverso()
 	{
@@ -18,6 +25,13 @@ public enum Condicao {
 			case MaiorIg   -> Menor;
 			case Menor     -> MaiorIg;
 			case MenorIg   -> Maior;
+
+			case IgualZero     -> DiferenteZero;
+			case DiferenteZero -> IgualZero;
+			case MaiorZero     -> MenorIgZero;
+			case MaiorIgZero   -> MenorZero;
+			case MenorZero     -> MaiorIgZero;
+			case MenorIgZero   -> MaiorZero;
 		};
 	}
 }

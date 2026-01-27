@@ -1,12 +1,9 @@
 $BEGIN_PROGRAM
 
-int a := 5;
-int b := 6;
-float c := 7.0;
+f := "Thiago";
+s := "Gomes";
+n := f + s;
 
-if (a && b && c) then {
-	a := a * 2;
-} 
-a := 9;
+exibe n;
 
 $END_PROGRAM

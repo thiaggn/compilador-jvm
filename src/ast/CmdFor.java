@@ -1,6 +1,6 @@
 package ast;
 
-public final class CmdFor extends Cmd
+public final class CmdFor extends No
 {
 	public Id              varInicial;  
 	public DeclVariavelFor decl;

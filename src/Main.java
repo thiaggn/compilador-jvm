@@ -7,11 +7,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import analisador.AnalisadorSemantico;
 import parser.Parser;
-import analisador.Analise;
-import intermediario.CodigoIntermediario;
-import intermediario.GeradorIR;
 
 public class Main 
 {
@@ -24,8 +20,7 @@ public class Main
 
 			var parser = new Parser(stream);
 			var programa = parser.gerarAST();
-			
-			// faz a análise semântica
+
 			Analise analise = AnalisadorSemantico.analisar(programa);
 			if (!analise.ok())
 			{
@@ -38,7 +33,7 @@ public class Main
 				programa.print();
 			}
 
-			CodigoIntermediario codigo = GeradorIR.traduzir(programa);
+			CodigoIntermediario codigo = GeradorIntermediario.traduzir(programa);
 			codigo.exibir();
 		} 
 		catch (Throwable err) 

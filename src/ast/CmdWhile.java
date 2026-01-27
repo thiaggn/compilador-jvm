@@ -1,6 +1,6 @@
 package ast;
 
-public class CmdWhile extends Cmd
+public class CmdWhile extends No
 {
 	public Expr  exprCondicao;
 	public Bloco bloco;

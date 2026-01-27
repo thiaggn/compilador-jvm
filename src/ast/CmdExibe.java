@@ -1,6 +1,6 @@
 package ast;
 
-public class CmdExibe extends Cmd
+public class CmdExibe extends No
 {
 	public Expr valor;
 

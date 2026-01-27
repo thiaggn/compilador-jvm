@@ -1,19 +1,26 @@
 package ir;
 
-public class Formato 
+public enum Formato 
 {
-	public final int bytes;
-	public final char sufixo;
+	Short,
+	Float,
+	Int,
+	Double ,
+	Long,
+	Referencia;
 
-	public Formato(int bytes, char sufixo)
+	public int tamanho()
 	{
-		this.bytes = bytes;
-		this.sufixo = sufixo;
+		return switch (this)
+		{
+			case Short      -> 1;
+			case Float      -> 1;
+			case Int        -> 1;
+			case Double     -> 2;
+			case Long       -> 2;
+			case Referencia -> 2;
+			default -> throw new Error();
+		};
 	}
 
-	public static final ir.Formato Short  = new Formato(2, 's');
-	public static final ir.Formato Float  = new Formato(4, 'f');
-	public static final ir.Formato Int    = new Formato(4, 'i');
-	public static final ir.Formato Double = new Formato(8, 'd');
-	public static final ir.Formato Long   = new Formato(8, 'l');
 }

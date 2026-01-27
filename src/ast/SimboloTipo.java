@@ -42,6 +42,6 @@ public class SimboloTipo
 	public static final SimboloTipo Short         = new SimboloTipo("short",  3, Primitivo.Short);
 	public static final SimboloTipo Char          = new SimboloTipo("char",   2, Primitivo.Short);
 	public static final SimboloTipo Bool          = new SimboloTipo("bool",   1, Primitivo.Int);
-	public static final SimboloTipo String        = new SimboloTipo("string", 0, Primitivo.Outro);
+	public static final SimboloTipo String        = new SimboloTipo("string", 0, Primitivo.Ponteiro);
 	public static final SimboloTipo Indeterminado = new SimboloTipo("<???>",  0, Primitivo.Outro);
 }

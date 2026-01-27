@@ -16,11 +16,11 @@ public class InstrOpBinaria extends Instrucao
 	{
 		switch (op)
 		{
-			case Operacao.Subtracao     -> Print.instrucao("sub" + this.formato.sufixo);
-			case Operacao.Adicao        -> Print.instrucao("add" + this.formato.sufixo);
-			case Operacao.Divisao       -> Print.instrucao("div" + this.formato.sufixo);
-			case Operacao.Resto         -> Print.instrucao("rem" + this.formato.sufixo);
-			case Operacao.Multiplicacao -> Print.instrucao("mul" + this.formato.sufixo);
+			case Operacao.Subtracao     -> Print.instrucao("sub");
+			case Operacao.Adicao        -> Print.instrucao("add");
+			case Operacao.Divisao       -> Print.instrucao("div" );
+			case Operacao.Resto         -> Print.instrucao("rem");
+			case Operacao.Multiplicacao -> Print.instrucao("mul");
 		}
 	}
 }

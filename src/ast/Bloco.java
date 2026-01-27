@@ -3,7 +3,7 @@ package ast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bloco extends No
+public class Bloco extends BlocoOuIf
 {
 	public final List<No> nos;
 

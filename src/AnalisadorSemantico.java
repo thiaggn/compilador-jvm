@@ -1,4 +1,4 @@
-package analisador;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,8 +81,16 @@ public class AnalisadorSemantico
 
 	static ast.No analisarIncremento(ast.ExprUnaria expr)
 	{
-		if (expr.op == ast.Operador.IncPos || expr.op == ast.Operador.DecPos)
+		if (expr.operador == ast.Operador.IncPos || expr.operador == ast.Operador.DecPos)
 		{
+			if (!(expr.expr instanceof ast.ExprId))
+			{
+				erro(expr, String.format(
+					"%s deve operar sobre um identificador.", 
+					expr.operador == ast.Operador.DecPos ? "decremento" : "incremento")
+				);
+			}
+
 			analisarExprUnaria(expr);
 		}
 		else {
@@ -546,21 +554,28 @@ public class AnalisadorSemantico
 		return cmd;
 	}
 
-	static ast.CmdIf analisarIf(ast.CmdIf cmd)
+	static ast.CmdIf analisarIf(ast.CmdIf cmdIf)
 	{
-		analisarExpr(cmd.exprCondicao);
-		if (!cmd.exprCondicao.tipo.ehPrimitivo())
+		analisarExpr(cmdIf.exprCondicao);
+		if (!cmdIf.exprCondicao.tipo.ehPrimitivo())
 		{
-			erro(cmd.exprCondicao, "a expressão de condição de um if deve resultar num primitivo.");
+			erro(cmdIf.exprCondicao, "a expressão de condição de um if deve resultar num primitivo.");
 		}
 
-		analisarBloco(cmd.blocoEntao);
-		if (cmd.blocoSenao != null)
+		analisarBloco(cmdIf.blocoEntao);
+		if (cmdIf.senao != null)
 		{
-			analisarBloco(cmd.blocoSenao);
+			if (cmdIf.senao instanceof ast.Bloco bloco)
+			{
+				analisarBloco(bloco);
+			}
+			else if (cmdIf.senao instanceof ast.CmdIf cmdSenao)
+			{
+				analisarIf(cmdSenao);
+			}
 		}
 
-		return cmd;
+		return cmdIf;
 	}
 
 	/// A expressão de inicialização do laço for é idêntica à expressão de atribuição,

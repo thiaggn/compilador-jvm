@@ -1,11 +1,11 @@
 package ir;
 
-public class InstrStore extends Instrucao
+public class InstrSalvar extends Instrucao
 {
 	public Slot    slot;
 	public Formato formato;
 
-	public InstrStore(Slot slot, Formato formato)
+	public InstrSalvar(Slot slot, Formato formato)
 	{
 		this.slot = slot;
 		this.formato = formato;
@@ -13,6 +13,6 @@ public class InstrStore extends Instrucao
 
 	@Override
 	public void print() {
-		Print.instrucao("store" + formato.sufixo, slot.nome);
+		Print.instrucao("save", slot.nome);
 	}
 }

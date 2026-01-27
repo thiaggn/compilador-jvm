@@ -129,17 +129,19 @@ CmdWhile CMD_WHILE(): {Expr cond; Bloco bloco; Token tokWhile;}
 	{ return new CmdWhile(cond, bloco, tokWhile); } 
 }
 
-CmdIf CMD_IF(): { Expr cond; Bloco blocoEntao, blocoSenao = null; CmdIf cmdSenao; Token tokIf;} 
+CmdIf CMD_IF(): { Expr cond; Bloco blocoEntao; BlocoOuIf senao = null; Token tokIf; }
 {
-    tokIf = <IF> <PAREN_ABRE> cond = EXPR() <PAREN_FECHA> <THEN> blocoEntao = BLOCO()
+    tokIf = <IF>
+    <PAREN_ABRE> cond = EXPR() <PAREN_FECHA>
+    <THEN> blocoEntao = BLOCO()
     (
-        <ELSE> 
+        <ELSE>
         (
-            cmdSenao = CMD_IF() { blocoSenao = new Bloco(cmdSenao); } 
-          | blocoSenao = BLOCO()
+            senao = CMD_IF()
+          | senao = BLOCO()
         )
     )?
-    { return new CmdIf(cond, blocoEntao, blocoSenao, tokIf); }
+    { return new CmdIf(cond, blocoEntao, senao, tokIf); }
 }
 
 Expr EXPR(): {Expr expr;} 

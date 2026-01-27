@@ -1,17 +1,17 @@
 package ast;
 
-public class CmdIf extends Cmd
+public class CmdIf extends BlocoOuIf
 {
-	public Expr  exprCondicao;
-	public Bloco blocoEntao;
-	public Bloco blocoSenao;
+	public Expr      exprCondicao;
+	public Bloco     blocoEntao;
+	public BlocoOuIf senao;
 
-	public CmdIf(Expr condicao, Bloco blocoEntao, Bloco blocoSenao, parser.Token tokIf)
+	public CmdIf(Expr condicao, Bloco blocoEntao, BlocoOuIf senao, parser.Token tokIf)
 	{
 		super(tokIf.beginLine, tokIf.beginColumn);
 		this.exprCondicao = condicao;
 		this.blocoEntao   = blocoEntao;
-		this.blocoSenao   = blocoSenao;
+		this.senao        = senao;
 	}
 
 	@Override
@@ -20,8 +20,10 @@ public class CmdIf extends Cmd
 		Print.abreObjeto("CmdIf");
 		Print.campoComObjeto("condição", this.exprCondicao);
 		Print.campoComObjeto("bloco_entao", this.blocoEntao);
-		if (this.blocoSenao != null) {
-			Print.campoComObjeto("bloco_senao", this.blocoSenao);
+		if (this.senao != null) {
+
+
+			Print.campoComObjeto("bloco_senao", this.senao);
 		}
 		Print.fechaObjeto();
 	}

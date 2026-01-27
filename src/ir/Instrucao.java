@@ -1,6 +1,5 @@
 package ir;
 
-public abstract class Instrucao {
-	
-	public abstract void print();
+public abstract class Instrucao extends ItemIntermediario {
+
 }

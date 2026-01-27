@@ -235,7 +235,7 @@ nos.add(no);
     throw new Error("Missing return statement in function");
   }
 
-  final public CmdIf CMD_IF() throws ParseException {Expr cond; Bloco blocoEntao, blocoSenao = null; CmdIf cmdSenao; Token tokIf;
+  final public CmdIf CMD_IF() throws ParseException {Expr cond; Bloco blocoEntao; BlocoOuIf senao = null; Token tokIf;
     tokIf = jj_consume_token(IF);
     jj_consume_token(PAREN_ABRE);
     cond = EXPR();
@@ -247,12 +247,11 @@ nos.add(no);
       jj_consume_token(ELSE);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case IF:{
-        cmdSenao = CMD_IF();
-blocoSenao = new Bloco(cmdSenao);
+        senao = CMD_IF();
         break;
         }
       case CHAVE_ABRE:{
-        blocoSenao = BLOCO();
+        senao = BLOCO();
         break;
         }
       default:
@@ -266,7 +265,7 @@ blocoSenao = new Bloco(cmdSenao);
       jj_la1[6] = jj_gen;
       ;
     }
-{if ("" != null) return new CmdIf(cond, blocoEntao, blocoSenao, tokIf);}
+{if ("" != null) return new CmdIf(cond, blocoEntao, senao, tokIf);}
     throw new Error("Missing return statement in function");
   }
 
@@ -727,13 +726,6 @@ args.add(arg);
     finally { jj_save(3, xla); }
   }
 
-  private boolean jj_3_3()
- {
-    if (jj_3R_9()) return true;
-    if (jj_scan_token(ATRIB)) return true;
-    return false;
-  }
-
   private boolean jj_3_4()
  {
     if (jj_3R_10()) return true;
@@ -763,6 +755,13 @@ args.add(arg);
   private boolean jj_3R_9()
  {
     if (jj_scan_token(ID)) return true;
+    return false;
+  }
+
+  private boolean jj_3_3()
+ {
+    if (jj_3R_9()) return true;
+    if (jj_scan_token(ATRIB)) return true;
     return false;
   }
 

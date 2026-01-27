@@ -1,6 +1,6 @@
 package ast;
 
-public class CmdDeclVariavel extends Cmd
+public class CmdDeclVariavel extends No
 {
 	public Id      identificador;
 	public Id      tipo;

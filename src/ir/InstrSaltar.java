@@ -1,10 +1,10 @@
 package ir;
 
-public class InstrJump extends Instrucao
+public class InstrSaltar extends Instrucao
 {
-	Label marcador;
+	Marcador marcador;
 
-	public InstrJump(Label marcador)
+	public InstrSaltar(Marcador marcador)
 	{
 		this.marcador = marcador;
 	}
